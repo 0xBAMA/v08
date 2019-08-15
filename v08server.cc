@@ -41,7 +41,7 @@ int main()
 
 
 
-	// while(1){
+	while(1){
 
 		fd = open(np, O_RDONLY); //open the pipe in read only mode
 		read(fd,(char*)&m,sizeof(message)); //blocking read waits for a message
@@ -53,6 +53,8 @@ int main()
 		sprintf(client_send_str,"%d_send",client_PID);
 		sprintf(client_recv_str,"%d_recv",client_PID);
 
+
+		break;
 		current_client_count++; //parent and child will need this information
 		//As mentioned in the instructions, this will only be correct for the
 		//moment at which the child process is created - it will not be updated.
@@ -125,8 +127,7 @@ int main()
 	// 		return 0; //once you have exited infinite while loop, exit this child process
 	//
 	// 	}//parent does not execute any code, no 'else' branch required
-	// }
+	}
 
-	unlink(np); //get rid of the fifo
 	return 0;
 }

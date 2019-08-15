@@ -47,12 +47,17 @@ public:
   // remove users that haven't done anything in a while (60 minutes?)
   void remove_inactive_users(); //time since time of last operation > 60 min
 
+  //create the initial FIFO
+	// const char * np = std::string("server_np").c_str(); //name of the named pipe
+
 
 
 private:
   int server_PID;
 
   std::vector<user> users;
+
+  const char * np = "server_np";
 
 };
 
@@ -64,11 +69,19 @@ server::server()
    server_PID = getpid();
 
    std::cout << "v08server process started with PID " << server_PID << std::endl;
+
+ 	 mkfifo(np, 0600); //owner has read and write permissions, group and other have none
 }
 
 
 
 server::~server()
 {
+
   std::cout << "server exiting" << std::endl;
+
+  std::cout << " unlinking server_np";
+  unlink(np); //get rid of the fifo
+  std::cout << "server_np unlinked     " << std::endl;
+
 }
