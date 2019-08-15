@@ -4,25 +4,29 @@
 
 
 //expresses the type of the incoming message
-typedef enum {
+typedef enum msg_type_t{
+	JOIN,				//sent by client when the client wishes to connect
 	RESPONSE, //the type that gets sent back to the client
-	STATUS,	//tells the server to report how many children it has
+	STATUS,	//tells the server to report status info
 	TIME,		//tells the server to report the current time of day
-	STRING,	//tells the server to expect a plain message
+	// STRING,	//tells the server to expect a plain message
+	LEAVE,			//removes the client from the list
 	COMMAND		//tells the server to exit
-} msg_type_t;
+} msg_type;
 
-typedef struct initial_msg{
 
-	int PID; //all that is needed initially is the PID value of the client
-
-}	initial_msg_t;
+// typedef struct initial_msg{
+//
+//
+// }	initial_msg_t;
 
 
 //structure for the subsequent messages
-typedef struct msg {
+typedef struct msg_t {
 
-	msg_type_t type;
+	int PID; //the PID value of the client
+
+	msg_type type;
 	char message_text[MSG_LENGTH];
 
-} msg_t; //<--allows declaration with 'msg_t' rather than 'struct msg'
+} message; //<--allows declaration with 'message' rather than 'struct msg'
