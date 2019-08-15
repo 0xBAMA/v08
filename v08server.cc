@@ -2,21 +2,15 @@
 
 int current_client_count;
 
-//function to decrement child count
-// void decrement_clients(int sig){
-// 	current_client_count--;
-// 	// printf("A child process has terminated - leaving %d clients connected\n", current_client_count);
-// 	signal(SIGCHLD, decrement_clients); //make sure the handler is registered
-// }
 
 
-int main()
-{
+int main(int argc, char const *argv[]) {
 
 	server s;
 
+	while(s.server_main(argc, argv));
 
-	int fd, client_PID;
+
 
 	int client_send_pipe, client_recv_pipe;
 
@@ -29,35 +23,16 @@ int main()
 	// std::cout << "v08server process started." << std::endl;
 
 
-	//create the initial FIFO
-	const char * np = std::string("server_np").c_str(); //name of the named pipe
-
-	mkfifo(np, 0600); //owner has read and write permissions, group and other have none
 
 
 
-	char client_send_str[12];//holds the name of the <PID>_send pipe
-	char client_recv_str[12];//holds the name of the <PID>_recv pipe
 
 
 
-	while(1){
 
-		fd = open(np, O_RDONLY); //open the pipe in read only mode
-		read(fd,(char*)&m,sizeof(message)); //blocking read waits for a message
-		close(fd); //close the file descriptor, now that we have a message from a client
-		//make sure to follow the pattern open-read-close to avoid complications
-
-		client_PID = m.PID; //get the PID from the message
-
-		sprintf(client_send_str,"%d_send",client_PID);
-		sprintf(client_recv_str,"%d_recv",client_PID);
-
-
-		break;
-		current_client_count++; //parent and child will need this information
-		//As mentioned in the instructions, this will only be correct for the
-		//moment at which the child process is created - it will not be updated.
+		// current_client_count++; //parent and child will need this information
+		// //As mentioned in the instructions, this will only be correct for the
+		// //moment at which the child process is created - it will not be updated.
 
 	// 	//fork
 	// 	if(!fork()){ //here we enter the child function
@@ -127,7 +102,6 @@ int main()
 	// 		return 0; //once you have exited infinite while loop, exit this child process
 	//
 	// 	}//parent does not execute any code, no 'else' branch required
-	}
 
 	return 0;
 }

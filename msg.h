@@ -5,7 +5,7 @@
 
 //expresses the type of the incoming message
 typedef enum msg_type_t{
-	JOIN,				//sent by client when the client wishes to connect
+	JOIN,		//sent by client when the client wishes to connect
 	RESPONSE, //the type that gets sent back to the client
 	STATUS,	//tells the server to report status info
 	TIME,		//tells the server to report the current time of day
@@ -29,4 +29,4 @@ typedef struct msg_t {
 	msg_type type;
 	char message_text[MSG_LENGTH];
 
-} message; //<--allows declaration with 'message' rather than 'struct msg'
+} message; //<--allows declaration with 'msg_t' rather than 'struct msg'

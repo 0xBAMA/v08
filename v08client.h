@@ -72,6 +72,24 @@ client::client()
   //close the initial pipe
   close(server_initial_pipe);
 
+
+
+
+  message m;
+
+  //read from the pid's recieve pipe
+  int recv_fd = open(recv_pipe, O_RDONLY);
+
+  read(recv_fd, (char*)&m, sizeof(message));
+  close(recv_fd);
+
+  std::cout << m.message_text << std::endl;
+
+
+  std::cout << std::endl << "exiting" << std::endl;
+
+
+
   printf("finished with connection to server\n");
 
   //we don't need server_initial_pipe again - now using two pid-specific pipes
