@@ -1,3 +1,4 @@
+#include <time.h>
 //this would all be the same in both files, so I went ahead and made it a header
 
 #define MSG_LENGTH 100 //maximum length of message
@@ -26,6 +27,7 @@ typedef struct msg_t {
 
 	int PID; //the PID value of the client
 
+	time_t sent_at;
 	msg_type type;
 	char message_text[MSG_LENGTH];
 

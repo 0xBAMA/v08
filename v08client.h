@@ -59,6 +59,10 @@ client::client()
   //initalize the message
   message m_init;
 
+  sprintf(m_init.message_text, "username sent from client at PID %d", client_PID);
+
+  // std::cout << m_init.message_text << std::endl;
+
   m_init.PID = client_PID;
   m_init.type = JOIN;
 
@@ -73,17 +77,24 @@ client::client()
   close(server_initial_pipe);
 
 
+  printf("about to get a message back\n");
+
+
+  //read from the pid's recieve pipe
+  // printf("opening pipe %s\n", recv_pipe);
+
+  int recv_fd = open(recv_pipe, O_RDONLY);
+
+  // printf("opened pipe %s\n", recv_pipe);
+
 
 
   message m;
 
-  //read from the pid's recieve pipe
-  int recv_fd = open(recv_pipe, O_RDONLY);
-
   read(recv_fd, (char*)&m, sizeof(message));
   close(recv_fd);
 
-  std::cout << m.message_text << std::endl;
+  std::cout << std::endl << "server says: " << m.message_text << std::endl;
 
 
   std::cout << std::endl << "exiting" << std::endl;
