@@ -10,7 +10,7 @@
 //#include <stdbool.h>
 #include <time.h>
 
-#include "msg.h" //definitions of message types
+#include "resources/msg.h" //definitions of message types
 
 
 class client{

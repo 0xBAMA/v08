@@ -13,7 +13,7 @@ all: v08client v08server
 v08client: v08client.o
 	$(CC) $(MAKE_EXE_CLIENT) v08client.o
 
-v08client.o: v08client.cc v08client.h msg.h
+v08client.o: v08client.cc v08client.h resources/msg.h
 	@echo
 	@echo "BUILDING CLIENT EXECUTABLE"
 	@echo
@@ -22,14 +22,16 @@ v08client.o: v08client.cc v08client.h msg.h
 
 #SERVER
 v08server: v08server.o
-	$(CC) $(MAKE_EXE_SERVER) v08server.o
+	$(CC) $(MAKE_EXE_SERVER) v08server.o voraldo.o
 
-v08server.o: v08server.cc v08server.h msg.h
+v08server.o: v08server.cc v08server.h resources/msg.h voraldo.o
 	@echo
 	@echo "BUILDING SERVER EXECUTABLE"
 	@echo
 	$(CC) $(MAKE_OBJ) v08server.cc
 
+voraldo.o: resources/voraldo.h resources/voraldo.cc
+	$(CC) $(MAKE_OBJ) resources/voraldo.cc
 
 clean:
 	@echo
