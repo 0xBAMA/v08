@@ -15,6 +15,7 @@
 
 
 #include "msg.h" //definitions of message types
+#include "voraldo.h"
 
 
 typedef struct user_t
