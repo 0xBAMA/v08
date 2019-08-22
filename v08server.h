@@ -90,6 +90,10 @@ server::server()
 
 
 
+   voraldo v;
+
+
+
    // set up select for the first time, with the only entry being the server_np
 
 }

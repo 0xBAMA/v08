@@ -1,5 +1,6 @@
 
 
 class voraldo{
+public:
     voraldo();
 };

@@ -14,6 +14,7 @@ all: v08client v08server
 	rm -f *_recv
 	rm -f *_send
 	rm -f server_np
+	@echo
 
 
 #CLIENT
@@ -39,3 +40,13 @@ voraldo.o: resources/voraldo.h resources/voraldo.cc
 	@echo -e "\e[31mBUILDING SERVER EXECUTABLE\e[0m"
 	@echo
 	$(CC) $(MAKE_OBJ) resources/voraldo.cc
+
+clean:
+	@echo
+	@echo -e "\e[31mCLEANUP\e[0m"
+	@echo
+	rm -f *.o
+	rm -f *_recv
+	rm -f *_send
+	rm -f server_np
+	@echo
