@@ -100,10 +100,7 @@ client::client()
   std::cout << std::endl << "client exiting" << std::endl;
 
 
-
-  // printf("finished with connection to server\n");
-
-  //we don't need server_initial_pipe again - now using two pid-specific pipes
+  //we don't need server_np again - now using two pid-specific pipes
   //with names stored in member variables send_pipe and recv_pipe
 
 }

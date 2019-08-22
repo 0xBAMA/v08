@@ -42,39 +42,44 @@ public:
   server();
   ~server();
 
-  void add_a_client(int PID);
-  void delete_client(int PID);
-
   // remove users that haven't done anything in a while (60 minutes?)
   void remove_inactive_users(); //time since last operation > 60 min
+
 
   // not really compatible with how glut is handled
   // int server_main(int argc, char const *argv[]) {return listen();}
 
 
-  int listen();   //to use glut, I think this goes in the timer function
+  int listen();   //to use glut, I think this goes in the timer function (?)
 
   void read_from_server_np(); //listen found activity on server_np
 
   void read_from_pid(int pid); //listen found activity related to
   void send_to_pid(int pid);  //for replies
 
-  void list_users();
+  void list_users();  //echo all active users in users
+
 
 
 
 private:
 
+
+  void process_message(message m); //do something with
+  // a message recieved from listen - i.e. manipulate 'v'
+
   const char * np = "server_np";
 
   voraldo v; //holds the data
 
-  int fd;
+  int server_np_fd;
   int server_PID;
 
   std::vector<user> users;
 
 };
+
+#define MAX_USERS 10
 
 
 
@@ -129,14 +134,37 @@ int server::listen()  //call this from the glut idle function
   // // make a decision based on what triggered the return from select()
   //
   // // if there's activity on server_np (new client connection)
-  // read_from_server_np();
+  read_from_server_np();
+
   //
   // list_users();
   //
   // return 0;
 
+  int num_clients = users.size();
+  cout << "there are " << num_clients << " clients"<< endl;
+
+// info from http://www.unixguide.net/unix/programming/2.1.2.shtml
 
   // open all active file descriptors
+  //  this is server_np plus <PID>_recv for each client
+
+  struct pollfd fds[MAX_USERS];
+
+  server_np_fd = open(np, O_RDONLY);
+
+  cout << "returned from read" << endl;
+
+  fds[0].fd = server_np_fd;
+  fds[0].events = POLLIN; //listening for input to be ready
+
+  // close(server_np_fd);
+
+  read_from_server_np();
+
+  cout << "FUUUUUUUCK" << endl;
+
+
 
   // set up poll()
   // returns number ready, fds is file descriptors, nfds is number of file
@@ -144,15 +172,20 @@ int server::listen()  //call this from the glut idle function
   //
   // int poll(struct pollfd fds[], nfds_t nfds, int timeout);
 
-  //
+
+
+  // if (!poll(...))  //we got an error
 
 
 
+  //close all the file descriptors [0] is server_np, then num_clients other fds
+  for(int i = 0; i <= num_clients; i++)
+    close(fds[i].fd);
 
 
 
   // return 1; //do this to continue, and do this loop again
-  // return 0; //do this to exit, in the real main
+  return 0; //do this to exit, in the real main
 
 }
 
@@ -213,12 +246,14 @@ void server::read_from_server_np()
 
   mkfifo(np, 0600); //owner has read and write permissions, group and other have none
 
-  fd = open(np, O_RDONLY); //open the pipe in read only mode
+  server_np_fd = open(np, O_RDONLY); //open the pipe in read only mode
 
 
   std::cout << "waiting";
-  read(fd,(char*)&m,sizeof(message)); //blocking read waits for a message
-  close(fd); //close the file descriptor, now that we have a message from a client
+  read(server_np_fd,(char*)&m,sizeof(message)); //blocking read waits for a message
+  close(server_np_fd); //close the file descriptor, now that we have a message from a client
+  unlink(np); //get rid of the fifo
+
   //make sure to follow the pattern open-read-close to avoid complications
 
   int client_PID = m.PID;
