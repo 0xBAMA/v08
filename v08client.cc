@@ -123,7 +123,7 @@ int main()
 
 	// }
 
-	std::cout << "\rClient Process Terminated";
+	// std::cout << "\rClient Process Terminated";
 
 	return 0;
 }

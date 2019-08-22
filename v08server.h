@@ -9,7 +9,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-//#include <stdbool.h> //didn't realize bools required a header
+
+#include <poll.h> //for poll()
 
 #include <time.h>
 
@@ -21,7 +22,6 @@
 typedef struct user_t
 {
   int PID;
-
 
   time_t time_of_connection;
   time_t time_of_last_operation;
@@ -48,8 +48,8 @@ public:
   // remove users that haven't done anything in a while (60 minutes?)
   void remove_inactive_users(); //time since last operation > 60 min
 
-
-  int server_main(int argc, char const *argv[]);
+  // not really compatible with how glut is handled
+  // int server_main(int argc, char const *argv[]) {return listen();}
 
 
   int listen();   //to use glut, I think this goes in the timer function
@@ -59,11 +59,15 @@ public:
   void read_from_pid(int pid); //listen found activity related to
   void send_to_pid(int pid);  //for replies
 
+  void list_users();
+
 
 
 private:
 
   const char * np = "server_np";
+
+  voraldo v; //holds the data
 
   int fd;
   int server_PID;
@@ -89,8 +93,9 @@ server::server()
    printf ( "The current date/time is: %s", asctime ( localtime ( &temp )) );
 
 
+   v.initialize(15,7,5);
 
-   voraldo v;
+   v.print_cli();
 
 
 
@@ -105,21 +110,93 @@ server::~server()
 
   std::cout << "server exiting" << std::endl;
 
-  std::cout << "unlinking server_np";
+  // std::cout << "unlinking server_np";
   unlink(np); //get rid of the fifo
   std::cout << "\rserver_np unlinked     " << std::endl;
 
 }
 
 
-int server::listen()
+
+
+
+int server::listen()  //call this from the glut idle function
 {
-  std::cout << "listening" << std::endl;
+  // // set up select() (or poll())
+  //
+  // // std::cout << "listening" << std::endl;
+  //
+  // // make a decision based on what triggered the return from select()
+  //
+  // // if there's activity on server_np (new client connection)
+  // read_from_server_np();
+  //
+  // list_users();
+  //
+  // return 0;
 
-  read_from_server_np();
 
-  return 0;
+  // open all active file descriptors
+
+  // set up poll()
+  // returns number ready, fds is file descriptors, nfds is number of file
+  //  descriptors, and timeout is the max time to wait, in ms
+  //
+  // int poll(struct pollfd fds[], nfds_t nfds, int timeout);
+
+  //
+
+
+
+
+
+
+  // return 1; //do this to continue, and do this loop again
+  // return 0; //do this to exit, in the real main
+
 }
+
+
+
+void server::list_users()
+{
+  // cout << "listing listing listing" << endl;
+
+  cout << endl;
+
+
+  // generate another user to confirm that the listing works
+
+  // user u;
+  // u.PID = 420;
+  // sprintf(u.initial_message_text, "INITIAL USERNAME");
+  // sprintf(u.client_send_str, "butt %s", "ssss");
+  // sprintf(u.client_recv_str, "nugg %s", "SSSS");
+  // u.time_of_connection = time(NULL);
+  // u.time_of_last_operation = time(NULL);
+  // users.push_back(u);
+
+
+
+  cout << "List of all present users:" << endl << endl << endl;
+  int count = 1;
+
+  for(user n : users)
+  {
+    cout << "-" << count << "-" << endl;
+    cout << "user with username " << n.initial_message_text << " has PID: "<< n.PID << endl;
+    cout << "\nconnected at "<< asctime(localtime(&n.time_of_connection));
+    cout << "\nlast active at "<< asctime(localtime(&n.time_of_last_operation));
+
+    cout << "\nuses " << n.client_send_str<<" and "<< n.client_recv_str << endl;
+    cout << endl << endl;
+    count++;
+  }
+
+  cout << endl;
+}
+
+
 
 
 
@@ -181,40 +258,25 @@ void server::read_from_server_np()
       break;
   }
 
-
-
-
   message r;
 
   r.PID = server_PID;
   r.type = RESPONSE;
   r.sent_at = time(NULL);
 
-  sprintf(r.message_text, "you are good, number %d", client_PID);
+  sprintf(r.message_text, "you're in, number %d", client_PID);
 
 
-
-  std::cout << r.message_text << std::endl;
   std::cout << "name given as: " << m.message_text << std::endl;
 
 
   std::cout << std::endl << std::endl;
-  printf("the string is \n");
-  std::cout << "\"" << client_recv_str << "\""<< std::endl;
+
+  // printf("the string is \n");
+  // std::cout << "\"" << client_recv_str << "\""<< std::endl;
+
   int response = open(client_recv_str, O_WRONLY);
   write(response, (char*)&r, sizeof(message));
   close(response);
 
-
-
-}
-
-
-
-
-
-int server::server_main(int argc, char const *argv[])
-{
-  return listen();
-  return 1;
 }

@@ -8,7 +8,9 @@ int main(int argc, char const *argv[]) {
 
 	server s;
 
-	while(s.server_main(argc, argv));
+	// while(s.server_main(argc, argv));
+
+	while(s.listen());
 
 
 
@@ -19,8 +21,6 @@ int main(int argc, char const *argv[]) {
 
 	message m; //used as a buffer for the incoming initial message
 
-
-	// std::cout << "v08server process started." << std::endl;
 
 
 

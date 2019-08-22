@@ -59,14 +59,14 @@ client::client()
   //initalize the message
   message m_init;
 
-  sprintf(m_init.message_text, "username sent from client at PID %d", client_PID);
+  sprintf(m_init.message_text, "USERNAME %d", client_PID);
 
   // std::cout << m_init.message_text << std::endl;
 
   m_init.PID = client_PID;
   m_init.type = JOIN;
 
-  printf("about to connect\n");
+  // printf("about to connect\n");
 
   //make sure to follow the pattern open-write-close
   //open the pipe that allows the initial contact between client and server
@@ -77,7 +77,7 @@ client::client()
   close(server_initial_pipe);
 
 
-  printf("about to get a message back\n");
+  // printf("about to get a message back\n");
 
 
   //read from the pid's recieve pipe
@@ -97,11 +97,11 @@ client::client()
   std::cout << std::endl << "server says: " << m.message_text << std::endl;
 
 
-  std::cout << std::endl << "exiting" << std::endl;
+  std::cout << std::endl << "client exiting" << std::endl;
 
 
 
-  printf("finished with connection to server\n");
+  // printf("finished with connection to server\n");
 
   //we don't need server_initial_pipe again - now using two pid-specific pipes
   //with names stored in member variables send_pipe and recv_pipe
@@ -116,7 +116,7 @@ client::~client()
   //send message with type LEAVE
 
   //unlink the send and recieve pipes
-  std::cout << "\n...unlinking pipes";
+  // std::cout << "\n...unlinking pipes";
 
   unlink(send_pipe);
   unlink(recv_pipe);
