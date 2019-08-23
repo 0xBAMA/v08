@@ -20,6 +20,7 @@ public:
 
   void send_message(message m);
   message recieve_message();
+  void check_again();
 
 
 
@@ -81,11 +82,11 @@ client::client()
 
 
   //read from the pid's recieve pipe
-  // printf("opening pipe %s\n", recv_pipe);
+  printf("opening pipe %s\n", recv_pipe);
 
   int recv_fd = open(recv_pipe, O_RDONLY);
 
-  // printf("opened pipe %s\n", recv_pipe);
+  printf("opened pipe %s\n", recv_pipe);
 
 
 
@@ -97,11 +98,12 @@ client::client()
   std::cout << std::endl << "server says: " << m.message_text << std::endl;
 
 
-  std::cout << std::endl << "client exiting" << std::endl;
+  // std::cout << std::endl << "client exiting" << std::endl;
 
 
   //we don't need server_np again - now using two pid-specific pipes
   //with names stored in member variables send_pipe and recv_pipe
+
 
 }
 
@@ -120,4 +122,20 @@ client::~client()
 
   std::cout << "\rpipes unlinked        " << std:: endl;
 
+}
+
+void client::check_again()
+{
+  std::cout << "about to check again" << std::endl;
+  int recv_fd = open(recv_pipe, O_RDONLY);
+  std::cout << "opened" << std::endl;
+
+  message m;
+
+  read(recv_fd, (char*)&m, sizeof(message));
+  close(recv_fd);
+
+  std::cout << std::endl << "server says: " << m.message_text << std::endl;
+
+  std::cout << std::endl << "client exiting" << std::endl;
 }

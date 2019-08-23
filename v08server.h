@@ -29,7 +29,10 @@ typedef struct user_t
   char initial_message_text[MSG_LENGTH]; //taken as name
 
   char client_send_str[12]; //holds the name of the <PID>_send pipe
+  int send_fd;
+
   char client_recv_str[12]; //holds the name of the <PID>_recv pipe
+  int recv_fd;
 
 }user;
 
@@ -131,15 +134,9 @@ int server::listen()  //call this from the glut idle function
   //
   // // std::cout << "listening" << std::endl;
   //
-  // // make a decision based on what triggered the return from select()
-  //
-  // // if there's activity on server_np (new client connection)
   read_from_server_np();
 
-  //
-  // list_users();
-  //
-  // return 0;
+
 
   int num_clients = users.size();
   cout << "there are " << num_clients << " clients"<< endl;
@@ -151,18 +148,42 @@ int server::listen()  //call this from the glut idle function
 
   struct pollfd fds[MAX_USERS];
 
-  server_np_fd = open(np, O_RDONLY);
-
-  cout << "returned from read" << endl;
+  // server_np_fd = open(np, O_RDONLY); //already open.. this is confusing
 
   fds[0].fd = server_np_fd;
-  fds[0].events = POLLIN; //listening for input to be ready
+  fds[0].events = POLLIN|POLLPRI; //listening for input to be ready
+  // cout << fds[0].events << endl;
 
-  // close(server_np_fd);
+  for(int i = 1; i <= num_clients; i++)
+  {
 
-  read_from_server_np();
+    fds[i].fd = open(users[i-1].client_send_str, O_RDONLY);
+    // fds[i].fd = users[i-1].send_fd;
+    fds[i].events = POLLIN|POLLPRI;
+    cout << fds[i].events << endl;
+  }
 
-  cout << "FUUUUUUUCK" << endl;
+
+  int num = poll(fds, num_clients+1, -1);
+
+  if(num > 0)
+  {
+    if((fds[0].revents&POLLIN) == POLLIN || (fds[0].revents&POLLPRI)==POLLPRI)
+      cout << "server_np has more data ready" << endl;
+
+    for(int i = 1; i <= num_clients; i++)
+      if((fds[i].revents&POLLIN)==POLLIN || (fds[i].revents&POLLPRI)==POLLPRI)
+        cout << "user " << i << " has data ready" << endl;
+
+
+
+    cout << "no other fds" << endl;
+  }
+
+
+
+  // read_from_server_np();
+  // cout << "FUUUUUUUCK" << endl;
 
 
 
@@ -180,8 +201,13 @@ int server::listen()  //call this from the glut idle function
 
   //close all the file descriptors [0] is server_np, then num_clients other fds
   for(int i = 0; i <= num_clients; i++)
+  {
+    cout << endl;
+    cout << "fd " << i << " has revents equal to " << fds[i].revents << endl;
+    cout << " and events equal to " << fds[i].events << endl;
+    cout << "where " << POLLIN << " is POLLIN and " << POLLPRI << " is POLLPRI" << endl;
     close(fds[i].fd);
-
+  }
 
 
   // return 1; //do this to continue, and do this loop again
@@ -247,12 +273,16 @@ void server::read_from_server_np()
   mkfifo(np, 0600); //owner has read and write permissions, group and other have none
 
   server_np_fd = open(np, O_RDONLY); //open the pipe in read only mode
+  // cout << endl << "server_np_fd is " << server_np_fd << endl;
+
 
 
   std::cout << "waiting";
   read(server_np_fd,(char*)&m,sizeof(message)); //blocking read waits for a message
+
   close(server_np_fd); //close the file descriptor, now that we have a message from a client
-  unlink(np); //get rid of the fifo
+
+  unlink(np); //this gets rid of a hang on a subsequent call to open (why?)
 
   //make sure to follow the pattern open-read-close to avoid complications
 
@@ -288,30 +318,54 @@ void server::read_from_server_np()
       sprintf(u.client_send_str, "%s", client_send_str);
       sprintf(u.client_recv_str, "%s", client_recv_str);
 
+      // mkfifo(client_send_str, 0600);
+      // mkfifo(client_recv_str, 0600);
+
+      // u.recv_fd = open(client_recv_str, O_WRONLY);
+
+
+      // close(u.send_fd);
+      // unlink(client_send_str);
+
+      // close(u.recv_fd);
+      // unlink(client_recv_str);
 
       users.push_back(u);
+
+      message r;
+
+      r.PID = server_PID;
+      r.type = RESPONSE;
+      r.sent_at = time(NULL);
+
+      sprintf(r.message_text, "you're in, number %d", client_PID);
+
+
+      std::cout << "name given as: " << m.message_text << std::endl;
+
+
+      std::cout << std::endl << std::endl;
+
+      u.recv_fd = open(client_recv_str, O_WRONLY);
+      write(u.recv_fd, (char*)&r, sizeof(message));
+      close(u.recv_fd);
+      cout << "sent first message" << endl;
+
+      u.recv_fd = open(client_recv_str, O_WRONLY);
+      write(u.recv_fd, (char*)&r, sizeof(message));
+      close(u.recv_fd);
+      cout << "sent second message" << endl;
+
+      // u.send_fd = open(client_send_str, O_RDONLY);
+      // cout << "opened reading pipe";
+      // close(u.send_fd);
+
+
+
+
       break;
   }
 
-  message r;
 
-  r.PID = server_PID;
-  r.type = RESPONSE;
-  r.sent_at = time(NULL);
-
-  sprintf(r.message_text, "you're in, number %d", client_PID);
-
-
-  std::cout << "name given as: " << m.message_text << std::endl;
-
-
-  std::cout << std::endl << std::endl;
-
-  // printf("the string is \n");
-  // std::cout << "\"" << client_recv_str << "\""<< std::endl;
-
-  int response = open(client_recv_str, O_WRONLY);
-  write(response, (char*)&r, sizeof(message));
-  close(response);
 
 }

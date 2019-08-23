@@ -6,7 +6,7 @@ int main()
 
 	client c;
 
-
+	c.check_again();
 
 
 	// printf("about to connect\n");
@@ -118,7 +118,7 @@ int main()
 	// while(1)
 	// {
 
-		std::cout << "\rClient Process Running" << std::flush;
+		// std::cout << "\rClient Process Running" << std::flush;
 		sleep(1);
 
 	// }
