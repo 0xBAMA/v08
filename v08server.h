@@ -124,8 +124,7 @@ server::server()
 
 
    while(1)
-   {
-     //set up poll to watch on server_np
+   {//set up poll to watch on server_np, until the first message is recieved
      if(poll(fds, 1, 500) > 0)
      {
        cout << "first message recieved on server_np: " << endl;
@@ -133,15 +132,6 @@ server::server()
        break;
      }
    }
-
-
-
-   //
-
-
-
-   // set up select for the first time, with the only entry being the server_np
-
 }
 
 
@@ -362,6 +352,8 @@ void server::take_input_from_user(int i)
   switch(m.type)
   {
     case SPHERE: //client wants to draw a sphere into the voraldo object
+      //I want to make this at least multithreaded, this time, since every
+      //voxel can be evaluated independently
       break;
 
     case LEAVE: //the client represented by users[i] wants to leave
@@ -380,6 +372,7 @@ void server::take_input_from_user(int i)
 
       //remove the user from the list of active users
       users.erase(users.begin() + i);
+      //i = 0 erases users[0], etc
 
       break;
 
