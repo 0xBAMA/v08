@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <iostream>
+using std::cout;
+using std::endl;
+
 #include <string>
 #include <vector>
 #include <signal.h>
@@ -71,7 +74,7 @@ private:
   void process_message(message m); //do something with
   // a message recieved from listen - i.e. manipulate 'v'
 
-  const char * np = "server_np";
+  // const char * np = "server_np";
 
   voraldo v; //holds the data
 
@@ -101,9 +104,39 @@ server::server()
    printf ( "The current date/time is: %s", asctime ( localtime ( &temp )) );
 
 
-   v.initialize(15,7,5);
+   v.initialize(8,7,5);
 
    v.print_cli();
+
+
+
+
+
+   //wait for the first client
+
+   struct pollfd fds[MAX_USERS];
+
+   mkfifo("server_np", 0600); //owner has read and write permissions, group and other have none
+
+   fds[0].fd = open("server_np", O_RDONLY|O_NONBLOCK);
+   fds[0].events = POLLIN;
+
+
+   while(1)
+   {
+     //set up poll to watch on server_np
+     if(poll(fds, 1, 500) > 0)
+     {
+       cout << "we have a message on server_np" << endl;
+       // unlink("server_np");
+       read_from_server_np();   //get the first client
+       break;
+     }
+   }
+
+
+
+   //
 
 
 
@@ -119,7 +152,7 @@ server::~server()
   std::cout << "server exiting" << std::endl;
 
   // std::cout << "unlinking server_np";
-  unlink(np); //get rid of the fifo
+  unlink("server_np"); //get rid of the fifo
   std::cout << "\rserver_np unlinked     " << std::endl;
 
 }
@@ -130,58 +163,69 @@ server::~server()
 
 int server::listen()  //call this from the glut idle function
 {
-  // // set up select() (or poll())
-  //
-  // // std::cout << "listening" << std::endl;
-  //
-  read_from_server_np();
+
+  // read_from_server_np();
+
+
+  // usleep(100);
 
 
 
   int num_clients = users.size();
-  cout << "there are " << num_clients << " clients"<< endl;
+  cout << "\rthere are " << num_clients << " clients... ";
 
 // info from http://www.unixguide.net/unix/programming/2.1.2.shtml
+// and also  http://man7.org/linux/man-pages/man2/open.2.html
 
   // open all active file descriptors
   //  this is server_np plus <PID>_recv for each client
 
   struct pollfd fds[MAX_USERS];
 
-  // server_np_fd = open(np, O_RDONLY); //already open.. this is confusing
+  mkfifo("server_np", 0600);
 
-  fds[0].fd = server_np_fd;
-  fds[0].events = POLLIN|POLLPRI; //listening for input to be ready
-  // cout << fds[0].events << endl;
+  fds[0].fd = open("server_np", O_RDONLY|O_NONBLOCK);
+  fds[0].events = POLLIN; //listening for input to be ready
 
-  for(int i = 1; i <= num_clients; i++)
-  {
-
-    fds[i].fd = open(users[i-1].client_send_str, O_RDONLY);
-    // fds[i].fd = users[i-1].send_fd;
-    fds[i].events = POLLIN|POLLPRI;
-    cout << fds[i].events << endl;
-  }
+  if(num_clients)
+    for(int i = 1; i <= num_clients; i++)
+    {
+      fds[i].fd = open(users[i-1].client_send_str, O_RDONLY|O_NONBLOCK);
+      fds[i].events = POLLIN;
+      // cout << fds[i].events << endl;
+    }
 
 
-  int num = poll(fds, num_clients+1, -1);
+  int num = poll(fds, num_clients+1, 500);
+  cout << "poll returned " << num;
 
   if(num > 0)
   {
-    if((fds[0].revents&POLLIN) == POLLIN || (fds[0].revents&POLLPRI)==POLLPRI)
+    if(fds[0].revents == POLLIN)
+    {
       cout << "server_np has more data ready" << endl;
 
+      close(fds[0].fd);
+
+      read_from_server_np();
+    }
+
     for(int i = 1; i <= num_clients; i++)
-      if((fds[i].revents&POLLIN)==POLLIN || (fds[i].revents&POLLPRI)==POLLPRI)
+    {
+      if(fds[i].revents==POLLIN)
+      {
         cout << "user " << i << " has data ready" << endl;
-
-
+      }
+      else
+      {
+        cout << endl << fds[i].revents << endl;
+      }
+    }
 
     cout << "no other fds" << endl;
   }
 
-
-
+  // unlink("server_np");
   // read_from_server_np();
   // cout << "FUUUUUUUCK" << endl;
 
@@ -199,19 +243,9 @@ int server::listen()  //call this from the glut idle function
 
 
 
-  //close all the file descriptors [0] is server_np, then num_clients other fds
-  for(int i = 0; i <= num_clients; i++)
-  {
-    cout << endl;
-    cout << "fd " << i << " has revents equal to " << fds[i].revents << endl;
-    cout << " and events equal to " << fds[i].events << endl;
-    cout << "where " << POLLIN << " is POLLIN and " << POLLPRI << " is POLLPRI" << endl;
-    close(fds[i].fd);
-  }
 
-
-  // return 1; //do this to continue, and do this loop again
-  return 0; //do this to exit, in the real main
+  return 1; //do this to continue, and do this loop again
+  // return 0; //do this to exit, in the real main
 
 }
 
@@ -267,22 +301,29 @@ void server::read_from_server_np()
   char client_send_str[12];//holds the name of the <PID>_send pipe
   char client_recv_str[12];//holds the name of the <PID>_recv pipe
 
+  cout << endl << "reading from server_np" << endl;
+
 
   message m;
 
-  mkfifo(np, 0600); //owner has read and write permissions, group and other have none
+  // unlink("server_np");
+  // mkfifo("server_np", 0600); //owner has read and write permissions, group and other have none
 
-  server_np_fd = open(np, O_RDONLY); //open the pipe in read only mode
-  // cout << endl << "server_np_fd is " << server_np_fd << endl;
+  // cout << "unlinked" << endl;
+
+  server_np_fd = open("server_np", O_RDONLY|O_NONBLOCK); //open the pipe in read only mode
+
+  // cout << "and opened" << endl;
 
 
 
-  std::cout << "waiting";
+
+  std::cout << endl << "waiting" << endl << std::flush;
   read(server_np_fd,(char*)&m,sizeof(message)); //blocking read waits for a message
 
   close(server_np_fd); //close the file descriptor, now that we have a message from a client
 
-  unlink(np); //this gets rid of a hang on a subsequent call to open (why?)
+  // unlink("server_np"); //this gets rid of a hang on a subsequent call to open (why?)
 
   //make sure to follow the pattern open-read-close to avoid complications
 
@@ -318,8 +359,8 @@ void server::read_from_server_np()
       sprintf(u.client_send_str, "%s", client_send_str);
       sprintf(u.client_recv_str, "%s", client_recv_str);
 
-      // mkfifo(client_send_str, 0600);
-      // mkfifo(client_recv_str, 0600);
+      mkfifo(client_send_str, 0600);
+      mkfifo(client_recv_str, 0600);
 
       // u.recv_fd = open(client_recv_str, O_WRONLY);
 
@@ -349,12 +390,12 @@ void server::read_from_server_np()
       u.recv_fd = open(client_recv_str, O_WRONLY);
       write(u.recv_fd, (char*)&r, sizeof(message));
       close(u.recv_fd);
-      cout << "sent first message" << endl;
+      // cout << "sent first message" << endl;
 
-      u.recv_fd = open(client_recv_str, O_WRONLY);
-      write(u.recv_fd, (char*)&r, sizeof(message));
-      close(u.recv_fd);
-      cout << "sent second message" << endl;
+      // u.recv_fd = open(client_recv_str, O_WRONLY);
+      // write(u.recv_fd, (char*)&r, sizeof(message));
+      // close(u.recv_fd);
+      // cout << "sent second message" << endl;
 
       // u.send_fd = open(client_send_str, O_RDONLY);
       // cout << "opened reading pipe";

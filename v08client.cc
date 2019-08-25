@@ -6,7 +6,7 @@ int main()
 
 	client c;
 
-	c.check_again();
+
 
 
 	// printf("about to connect\n");

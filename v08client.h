@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <iostream>
+using std::cout;
+using std::endl;
+
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -20,7 +23,7 @@ public:
 
   void send_message(message m);
   message recieve_message();
-  void check_again();
+
 
 
 
@@ -74,8 +77,10 @@ client::client()
   server_initial_pipe = open("server_np", O_WRONLY);
   //write a message to server with the client's PID, for further communication
   write(server_initial_pipe,(char*)&m_init,sizeof(message));
+  cout << "JOIN message written to server_np" << endl;
   //close the initial pipe
   close(server_initial_pipe);
+  cout << "server_np closed" << endl;
 
 
   // printf("about to get a message back\n");
@@ -96,6 +101,20 @@ client::client()
   close(recv_fd);
 
   std::cout << std::endl << "server says: " << m.message_text << std::endl;
+
+
+
+  // //send message on <PID>_send
+  // int send_fd = open(send_pipe, O_WRONLY|O_NONBLOCK);
+  // std::cout << "send pipe opened..." << endl;
+  //
+  // write(send_fd, (char*)&m, sizeof(message));
+  // close(send_fd);
+  //
+  // cout << "sent" << endl;
+
+
+
 
 
   // std::cout << std::endl << "client exiting" << std::endl;
@@ -122,20 +141,4 @@ client::~client()
 
   std::cout << "\rpipes unlinked        " << std:: endl;
 
-}
-
-void client::check_again()
-{
-  std::cout << "about to check again" << std::endl;
-  int recv_fd = open(recv_pipe, O_RDONLY);
-  std::cout << "opened" << std::endl;
-
-  message m;
-
-  read(recv_fd, (char*)&m, sizeof(message));
-  close(recv_fd);
-
-  std::cout << std::endl << "server says: " << m.message_text << std::endl;
-
-  std::cout << std::endl << "client exiting" << std::endl;
 }
