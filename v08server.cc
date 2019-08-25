@@ -8,31 +8,14 @@ int main(int argc, char const *argv[]) {
 
 	server s;
 
-	// while(s.server_main(argc, argv));
-
 	while(s.listen());
 
 
 
-	int client_send_pipe, client_recv_pipe;
-
-	current_client_count = 0; //initially, no clients have connected
-	// signal(SIGCHLD, decrement_clients); //set up signal handler to decrement child count
-
-	message m; //used as a buffer for the incoming initial message
 
 
 
 
-
-
-
-
-
-
-		// current_client_count++; //parent and child will need this information
-		// //As mentioned in the instructions, this will only be correct for the
-		// //moment at which the child process is created - it will not be updated.
 
 	// 	//fork
 	// 	if(!fork()){ //here we enter the child function

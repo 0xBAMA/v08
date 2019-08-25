@@ -48,9 +48,10 @@ client::client()
   printf("v08client process started with PID %d\n", client_PID);
 
 
-//before writing to the server_np, open this process's pipes, i.e. <PID>_send and <PID>_recv
-//avoids a race condition, makes sure that the pipes are set up BEFORE the
-//forked server process tries to used them to communicate with this process
+//before writing to the server_np, open this process's pipes
+//  i.e. <PID>_send and <PID>_recv
+// avoids a race condition, makes sure that the pipes are set up BEFORE the
+// server process tries to used them to communicate with this process
 
 
   //create the two pipes to allow bidirectional client-server communication
@@ -77,23 +78,16 @@ client::client()
   server_initial_pipe = open("server_np", O_WRONLY);
   //write a message to server with the client's PID, for further communication
   write(server_initial_pipe,(char*)&m_init,sizeof(message));
-  cout << "JOIN message written to server_np" << endl;
+
   //close the initial pipe
+  //note: we don't need server_np again - now using two pid-specific pipes
+  //  with names stored in member variables send_pipe and recv_pipe
   close(server_initial_pipe);
-  cout << "server_np closed" << endl;
 
-
-  // printf("about to get a message back\n");
 
 
   //read from the pid's recieve pipe
-  printf("opening pipe %s\n", recv_pipe);
-
   int recv_fd = open(recv_pipe, O_RDONLY);
-
-  printf("opened pipe %s\n", recv_pipe);
-
-
 
   message m;
 
@@ -104,25 +98,28 @@ client::client()
 
 
 
-  // //send message on <PID>_send
-  // int send_fd = open(send_pipe, O_WRONLY|O_NONBLOCK);
-  // std::cout << "send pipe opened..." << endl;
-  //
-  // write(send_fd, (char*)&m, sizeof(message));
-  // close(send_fd);
-  //
-  // cout << "sent" << endl;
+  //wait 1 second, 8 times
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
+  usleep(1000000);
 
 
+  //change the content of the message
+  m.PID = client_PID;
+  m.type = LEAVE;
+  sprintf(m.message_text, "%d is leaving.", client_PID);
 
+  cout << "sent to server: " << m.message_text << endl;
 
-
-  // std::cout << std::endl << "client exiting" << std::endl;
-
-
-  //we don't need server_np again - now using two pid-specific pipes
-  //with names stored in member variables send_pipe and recv_pipe
-
+  //send message on <PID>_send
+  int send_fd = open(send_pipe, O_WRONLY);
+  write(send_fd, (char*)&m, sizeof(message));
+  close(send_fd);
 
 }
 
@@ -139,6 +136,6 @@ client::~client()
   unlink(send_pipe);
   unlink(recv_pipe);
 
-  std::cout << "\rpipes unlinked        " << std:: endl;
+  // std::cout << "\rpipes unlinked        " << std:: endl;
 
 }

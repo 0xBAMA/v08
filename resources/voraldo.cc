@@ -41,17 +41,13 @@ void voraldo::initialize(int x, int y, int z)
     }
   }
 
-  // data[4][19][20].val = 4.8f;
-  // cout << data[4][19][20].val << endl;
-
-
   data[0][0][0].val = 1.0f;
-  data[4][4][4].val = 1.0f;
+  data[2][2][2].val = 1.0f;
 
 }
 
 
-//very simple 
+//very simple
 void voraldo::print_cli()
 {
   cout << endl;

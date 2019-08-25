@@ -2,8 +2,6 @@
 
 int main()
 {
-
-
 	client c;
 
 

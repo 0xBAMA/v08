@@ -8,11 +8,13 @@
 typedef enum msg_type_t{
 	JOIN,		//sent by client when the client wishes to connect
 	RESPONSE, //the type that gets sent back to the client
-	STATUS,	//tells the server to report status info
-	TIME,		//tells the server to report the current time of day
-	// STRING,	//tells the server to expect a plain message
-	LEAVE,			//removes the client from the list
-	COMMAND		//tells the server to exit
+	// STATUS,	//tells the server to report status info
+	// TIME,		//tells the server to report the current time of day
+
+	SPHERE,			//user wants to draw a sphere into the voraldo object
+
+
+	LEAVE			//removes the client from the list
 } msg_type;
 
 
