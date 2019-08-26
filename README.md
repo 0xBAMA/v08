@@ -8,5 +8,7 @@ note: this time, I'm going to multithread the voraldo draw functions, since ever
 TO DO:
 
   implementation of voraldo functions (figure out threads)
+  
   user menu prompt and input interpretation client-side
+  
   glut functions server-side
