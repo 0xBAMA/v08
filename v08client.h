@@ -48,7 +48,7 @@ client::client()
 {
 
   client_PID = getpid(); // who am I
-  printf("╒════════════════════════════════════PID═%05d══╕", client_PID);
+  printf("╒════════════════════════v08═Client══PID═%05d══╕", client_PID);
   // printf("│"); fflush(stdout); //need to manually flush buffered output
 
 //before writing to the server_np, open this process's pipes
