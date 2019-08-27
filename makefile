@@ -6,6 +6,10 @@ MAKE_EXE_SERVER= -o v08s
 MAKE_OBJ= -c
 
 
+#a note on my usage of echo -
+#  @ makes it silent
+#  -e enables escape sequences, i.e. \whatever
+
 all: v08client v08server
 	@echo
 	@echo -e "\e[31mCLEANUP\e[0m"

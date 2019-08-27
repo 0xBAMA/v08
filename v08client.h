@@ -50,7 +50,6 @@ client::client()
   client_PID = getpid(); // who am I
   printf("╒════════════════════════════════════PID═%05d══╕", client_PID);
   // printf("│"); fflush(stdout); //need to manually flush buffered output
-  cout << "\n╞═MAIN═MENU═════════════════════════════════════╡";
 
 //before writing to the server_np, open this process's pipes
 //  i.e. <PID>_send and <PID>_recv
@@ -105,27 +104,21 @@ client::client()
   // usleep(1000000);
 
 
-  char temp;
-
-  present_top_menu();
-
-  cin >> temp;
-
-  if(temp == 'n')
+  while(1)
   {
-    //change the content of the message
-    m.PID = client_PID;
-    m.type = LEAVE;
-    sprintf(m.message_text, "%05d is leaving.              │", client_PID);
+    present_top_menu();
 
-    cout << "╞═══════════════════════════════════════════════╡\n";
+    char temp;
+    cin >> temp;
 
-    cout << "│sent to server: " << m.message_text;
-
-    //send message on <PID>_send
-    int send_fd = open(send_pipe, O_WRONLY);
-    write(send_fd, (char*)&m, sizeof(message));
-    close(send_fd);
+    if(temp == 'n')
+    {
+      break;
+    }
+    else
+    {
+      cout << "│unrecognized input                             │";
+    }
   }
 
 }
@@ -135,23 +128,32 @@ client::client()
 client::~client()
 {
 
-  //send message with type LEAVE
+  //send a message of type LEAVE
+  message m;
+  m.PID = client_PID;
+  m.type = LEAVE;
+  sprintf(m.message_text, "%05d is leaving.              │", client_PID);
+  cout << "╞═══════════════════════════════════════════════╡\n";
+  cout << "│sent to server: " << m.message_text;
+
+  //send message on <PID>_send
+  int send_fd = open(send_pipe, O_WRONLY);
+  write(send_fd, (char*)&m, sizeof(message));
+  close(send_fd);
 
   //unlink the send and recieve pipes
-  // std::cout << "\n...unlinking pipes";
-
-  unlink(send_pipe);
-  unlink(recv_pipe);
 
   cout << endl << "╘══════════════════════════════════════goodbye══╛\n";
 
-  // std::cout << "\rpipes unlinked        " << std:: endl;
+  unlink(send_pipe);
+  unlink(recv_pipe);
 
 }
 
 
 void client::present_top_menu()
 {
+  cout << endl << "╞═MAIN═MENU═════════════════════════════════════╡";
   cout << endl << "│enter 'n', followed by the enter key, to exit. │";
   cout << endl << "│>                                              │";
   cout <<       "\r│>" << std::flush; //so that this can be there  ^
@@ -163,7 +165,7 @@ void client::present_top_menu()
 
 
 
-//MENU CHARACTERS
+//MENU CHARACTERS - from https://en.wikipedia.org/wiki/Box-drawing_character
 // │ 	┤ 	╡ 	╢ 	╖ 	╕ 	╣ 	║ 	╗ 	╝ 	╜ 	╛ 	┐
 // └ 	┴ 	┬ 	├ 	─ 	┼ 	╞ 	╟ 	╚ 	╔ 	╩ 	╦ 	╠ 	═ 	╬ 	╧
 // ╨ 	╤ 	╥ 	╙ 	╘ 	╒ 	╓ 	╫ 	╪ 	┘ 	┌
