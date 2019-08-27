@@ -160,6 +160,7 @@ void client::menu()
 
 void client::present_top_menu()
 {
+  cout << endl << "╞════════════════════════════════════════════════╡";
   cout << endl << "╞═MAIN═MENU══════════════════════════════════════╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
@@ -179,3 +180,34 @@ void client::present_top_menu()
 // │ 	┤ 	╡ 	╢ 	╖ 	╕ 	╣ 	║ 	╗ 	╝ 	╜ 	╛ 	┐
 // └ 	┴ 	┬ 	├ 	─ 	┼ 	╞ 	╟ 	╚ 	╔ 	╩ 	╦ 	╠ 	═ 	╬ 	╧
 // ╨ 	╤ 	╥ 	╙ 	╘ 	╒ 	╓ 	╫ 	╪ 	┘ 	┌
+
+
+
+
+//COLOR FORMATTING
+// BOLD       \e[1m
+//
+// RESET      \e[0m
+// ERROR      \e[1;41;37m\a
+// MENU       \e[44;37m
+//
+//
+//TEXT COLORS
+// T_BLACK    \e[30m
+// T_RED      \e[31m
+// T_GREEN    \e[32m
+// T_YELLOW   \e[33m
+// T_BLUE     \e[34m
+// T_MAGENTA  \e[35m
+// T_CYAN     \e[36m
+// T_WHITE    \e[37m
+//
+//BACKGROUND COLORS
+// B_BLACK    \e[40m
+// B_RED      \e[41m
+// B_GREEN    \e[42m
+// B_YELLOW   \e[43m
+// B_BLUE     \e[44m
+// B_MAGENTA  \e[45m
+// B_CYAN     \e[46m
+// B_WHITE    \e[47m
