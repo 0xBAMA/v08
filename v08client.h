@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 using std::cout;
+using std::cin;
 using std::endl;
 
 #include <signal.h>
@@ -24,6 +25,8 @@ public:
   void send_message(message m);
   message recieve_message();
 
+  void present_top_menu();
+
 
 
 
@@ -45,8 +48,9 @@ client::client()
 {
 
   client_PID = getpid(); // who am I
-  printf("v08client process started with PID %d\n", client_PID);
-
+  printf("╒════════════════════════════════════PID═%05d══╕", client_PID);
+  // printf("│"); fflush(stdout); //need to manually flush buffered output
+  cout << "\n╞═MAIN═MENU═════════════════════════════════════╡";
 
 //before writing to the server_np, open this process's pipes
 //  i.e. <PID>_send and <PID>_recv
@@ -71,7 +75,6 @@ client::client()
   m_init.PID = client_PID;
   m_init.type = JOIN;
 
-  // printf("about to connect\n");
 
   //make sure to follow the pattern open-write-close
   //open the pipe that allows the initial contact between client and server
@@ -94,32 +97,36 @@ client::client()
   read(recv_fd, (char*)&m, sizeof(message));
   close(recv_fd);
 
-  std::cout << std::endl << "server says: " << m.message_text << std::endl;
+  // std::cout << "│server says: " << m.message_text << std::endl;
 
 
 
-  //wait 1 second, 8 times
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
-  usleep(1000000);
+  // //wait 1 second
+  // usleep(1000000);
 
 
-  //change the content of the message
-  m.PID = client_PID;
-  m.type = LEAVE;
-  sprintf(m.message_text, "%d is leaving.", client_PID);
+  char temp;
 
-  cout << "sent to server: " << m.message_text << endl;
+  present_top_menu();
 
-  //send message on <PID>_send
-  int send_fd = open(send_pipe, O_WRONLY);
-  write(send_fd, (char*)&m, sizeof(message));
-  close(send_fd);
+  cin >> temp;
+
+  if(temp == 'n')
+  {
+    //change the content of the message
+    m.PID = client_PID;
+    m.type = LEAVE;
+    sprintf(m.message_text, "%05d is leaving.              │", client_PID);
+
+    cout << "╞═══════════════════════════════════════════════╡\n";
+
+    cout << "│sent to server: " << m.message_text;
+
+    //send message on <PID>_send
+    int send_fd = open(send_pipe, O_WRONLY);
+    write(send_fd, (char*)&m, sizeof(message));
+    close(send_fd);
+  }
 
 }
 
@@ -136,6 +143,27 @@ client::~client()
   unlink(send_pipe);
   unlink(recv_pipe);
 
+  cout << endl << "╘══════════════════════════════════════goodbye══╛\n";
+
   // std::cout << "\rpipes unlinked        " << std:: endl;
 
 }
+
+
+void client::present_top_menu()
+{
+  cout << endl << "│enter 'n', followed by the enter key, to exit. │";
+  cout << endl << "│>                                              │";
+  cout <<       "\r│>" << std::flush; //so that this can be there  ^
+                                            //at the end of the user prompt
+}
+
+
+
+
+
+
+//MENU CHARACTERS
+// │ 	┤ 	╡ 	╢ 	╖ 	╕ 	╣ 	║ 	╗ 	╝ 	╜ 	╛ 	┐
+// └ 	┴ 	┬ 	├ 	─ 	┼ 	╞ 	╟ 	╚ 	╔ 	╩ 	╦ 	╠ 	═ 	╬ 	╧
+// ╨ 	╤ 	╥ 	╙ 	╘ 	╒ 	╓ 	╫ 	╪ 	┘ 	┌
