@@ -132,9 +132,9 @@ client::~client()
   message m;
   m.PID = client_PID;
   m.type = LEAVE;
-  sprintf(m.message_text, "%05d is leaving.              │", client_PID);
+  sprintf(m.message_text, "%05d is leaving.", client_PID);
   cout << "╞═══════════════════════════════════════════════╡\n";
-  cout << "│sent to server: " << m.message_text;
+  cout << "│sent to server: " << m.message_text << "              │";
 
   //send message on <PID>_send
   int send_fd = open(send_pipe, O_WRONLY);
