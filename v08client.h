@@ -25,6 +25,8 @@ public:
   void send_message(message m);
   message recieve_message();
 
+
+  void menu();
   void present_top_menu();
 
 
@@ -48,7 +50,7 @@ client::client()
 {
 
   client_PID = getpid(); // who am I
-  printf("╒════════════════════════v08═Client══PID═%05d══╕", client_PID);
+  printf("╒═════════════════════════v08═Client══PID═%05d══╕", client_PID);
   // printf("│"); fflush(stdout); //need to manually flush buffered output
 
 //before writing to the server_np, open this process's pipes
@@ -103,23 +105,7 @@ client::client()
   // //wait 1 second
   // usleep(1000000);
 
-
-  while(1)
-  {
-    present_top_menu();
-
-    char temp;
-    cin >> temp;
-
-    if(temp == 'n')
-    {
-      break;
-    }
-    else
-    {
-      cout << "│unrecognized input                             │";
-    }
-  }
+  menu();
 
 }
 
@@ -133,8 +119,8 @@ client::~client()
   m.PID = client_PID;
   m.type = LEAVE;
   sprintf(m.message_text, "%05d is leaving.", client_PID);
-  cout << "╞═══════════════════════════════════════════════╡\n";
-  cout << "│sent to server: " << m.message_text << "              │";
+  cout << "╞════════════════════════════════════════════════╡\n";
+  cout << "│sent to server: " << m.message_text << "               │";
 
   //send message on <PID>_send
   int send_fd = open(send_pipe, O_WRONLY);
@@ -143,7 +129,7 @@ client::~client()
 
   //unlink the send and recieve pipes
 
-  cout << endl << "╘══════════════════════════════════════goodbye══╛\n";
+  cout << endl << "╘═══════════════════════════════════════goodbye══╛\n";
 
   unlink(send_pipe);
   unlink(recv_pipe);
@@ -151,12 +137,36 @@ client::~client()
 }
 
 
+
+void client::menu()
+{
+  while(1)
+  {
+    present_top_menu();
+
+    char temp;
+    cin >> temp;
+
+    if(temp == 'n')
+    {
+      break;
+    }
+    else
+    {
+      cout << "│unrecognized input                              │";
+    }
+  }
+}
+
 void client::present_top_menu()
 {
-  cout << endl << "╞═MAIN═MENU═════════════════════════════════════╡";
-  cout << endl << "│enter 'n', followed by the enter key, to exit. │";
-  cout << endl << "│>                                              │";
-  cout <<       "\r│>" << std::flush; //so that this can be there  ^
+  cout << endl << "╞═MAIN═MENU══════════════════════════════════════╡";
+  cout << endl << "│Enter one of the following, then the enter key. │";
+  cout << endl << "│                                                │";
+  cout << endl << "│  n: exit                                       │";
+  cout << endl << "│                                                │";
+  cout << endl << "│>                                               │";
+  cout <<       "\r│>" << std::flush;  //so that this can be there  ^
                                             //at the end of the user prompt
 }
 
