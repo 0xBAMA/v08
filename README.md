@@ -8,7 +8,7 @@ Open at least two terminals, navigate to the root directory of the repo - in one
 
 
 
-[note: this time, I'm going to multithread the voraldo draw functions, since every voxel can be evaluated independently, I want to be able to speed that up as much as possible to avoid delays - i.e. when a message is recieved, so that there aren't excessive delays between frames
+[note: this time, I'm going to multithread the voraldo draw functions, since every voxel can be evaluated independently, I want to be able to speed that up as much as possible to avoid delays - i.e. when a message is recieved, so that there aren't excessive delays between frames]
 
 thread pooling-
 
