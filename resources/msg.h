@@ -6,15 +6,18 @@
 
 //expresses the type of the incoming message
 typedef enum msg_type_t{
+
 	JOIN,		//sent by client when the client wishes to connect
+	LEAVE,			//removes the client from the list
 	RESPONSE, //the type that gets sent back to the client
-	// STATUS,	//tells the server to report status info
-	// TIME,		//tells the server to report the current time of day
 
-	SPHERE,			//user wants to draw a sphere into the voraldo object
+	STATUS,		 //tells the server to report status info
+	TIME,			//tells the server to report the current time of day
+	DISPLAY, //tells the server to do the
+
+	SPHERE			//user wants to draw a sphere into the voraldo object
 
 
-	LEAVE			//removes the client from the list
 } msg_type;
 
 
@@ -32,5 +35,13 @@ typedef struct msg_t {
 	time_t sent_at;
 	msg_type type;
 	char message_text[MSG_LENGTH];
+
+	//ARGUMENTS TO DRAW FUNCTIONS
+
+	int location1x;
+	int location1y;
+	int location1z;
+
+	int radius1;
 
 } message; //<--allows declaration with 'msg_t' rather than 'struct msg'

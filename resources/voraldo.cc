@@ -41,6 +41,14 @@ void voraldo::initialize(int x, int y, int z)
     }
   }
 
+  srand(time(NULL)); // by default seeded with 1, here seeded with the time
+
+  for(int loopx = 0; loopx < x; loopx++)
+    for(int loopy = 0; loopy < y; loopy++)
+      for(int loopz = 0; loopz < z; loopz++)
+        data[loopx][loopy][loopz].val = ((int)std::rand()) % 10;
+
+
   data[0][0][0].val = 1.0f;
   data[2][2][2].val = 1.0f;
 
@@ -57,8 +65,17 @@ void voraldo::print_cli()
     for(int y = 0; y < this->y; y++)
     {
       for(int x = 0; x < this->x; x++)
-      {
-        cout << data[x][y][z].val;
+      { //colors
+        if((int)data[x][y][z].val %2 == 0)
+          cout << "\e[32m";
+        if((int)data[x][y][z].val %3 == 0)
+          cout << "\e[34m";
+        if((int)data[x][y][z].val %4 == 0)
+          cout << "\e[35m";
+
+        cout << data[x][y][z].val << "\e[0m"; //reset colors
+
+
       }
       cout << endl;
     }

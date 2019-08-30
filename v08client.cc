@@ -4,7 +4,8 @@ int main()
 {
 	client c;
 
-
+	while(!c.done)
+		c.menu();
 
 
 	// printf("about to connect\n");

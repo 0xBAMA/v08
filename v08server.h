@@ -46,7 +46,7 @@ typedef struct user_t
 class server{
 public:
 
-  server();
+  server(int x, int y, int z);
   ~server();
 
   // remove users that haven't done anything in a while (60 minutes?)
@@ -58,6 +58,7 @@ public:
 
 
   int listen();   //to use glut, I think this goes in the timer function (?)
+                 //there's some likelyhood that a separate thread could be used
 
   void read_from_server_np(); //listen found activity on server_np
   void take_input_from_user(int i); //listen found activity on a <PID>_send
@@ -83,6 +84,9 @@ private:
   int server_np_fd;
   int server_PID;
 
+  time_t server_last_operation;   // used to shut down the server if inactive
+  // where inactive is defined as having zero users for some period of time
+
   std::vector<user> users;
 
 };
@@ -92,7 +96,7 @@ private:
 
 
 
-server::server()
+server::server(int x, int y, int z)
 {
    server_PID = getpid();
    mkfifo("server_np", 0600);
@@ -106,7 +110,7 @@ server::server()
    printf ( "The current date/time is: %s\n", asctime ( localtime ( &temp )) );
 
 
-   v.initialize(3,3,3);
+   v.initialize(x,y,z);
 
    v.print_cli();
 
@@ -267,17 +271,23 @@ void server::read_from_server_np()
 {
   message m;
 
+  int recv_fd = 0; //used to point to <PID>_recv
+
   //open the pipe in read only mode
   server_np_fd = open("server_np", O_RDONLY|O_NONBLOCK);
+
+
 
   //wait for a message
   //  it's blocking but it's not an issue, because we know there's data there
   read(server_np_fd,(char*)&m,sizeof(message));
+  int client_PID = m.PID; // who connected?
 
   //close the file descriptor, we have a message from a client
   close(server_np_fd);
 
-  int client_PID = m.PID; // who connected?
+
+
 
 
 
@@ -320,10 +330,14 @@ void server::read_from_server_np()
 
       std::cout << std::endl << std::endl;
 
-      int recv_fd = open(u.client_recv_str, O_WRONLY);
+      recv_fd = open(u.client_recv_str, O_WRONLY);
       write(recv_fd, (char*)&r, sizeof(message));
       close(recv_fd);
 
+      break;
+
+    default:
+      cout << endl << "recieved message of unknown type" << endl;
       break;
   }
 }
@@ -331,6 +345,7 @@ void server::read_from_server_np()
 
 void server::take_input_from_user(int i)
 {
+  time_t temp_time;
   message m,r;
 
   //open the pipe in read only mode
@@ -352,11 +367,6 @@ void server::take_input_from_user(int i)
 
   switch(m.type)
   {
-    case SPHERE: //client wants to draw a sphere into the voraldo object
-      //I want to make this at least multithreaded, this time, since every
-      //voxel can be evaluated independently
-      break;
-
     case LEAVE: //the client represented by users[i] wants to leave
 
       cout << "  user with PID " << m.PID << " is leaving" << endl << endl;
@@ -374,6 +384,28 @@ void server::take_input_from_user(int i)
       //remove the user from the list of active users
       users.erase(users.begin() + i);
       //i = 0 erases users[0], etc
+
+      break;
+
+    case TIME:
+      cout << "  " << m.PID << " wants to know the time" << endl;
+      temp_time = time(NULL);
+      cout << "  here it is: " << asctime(localtime(&temp_time)) << endl;
+      break;
+
+    case DISPLAY:
+      cout << "  " << m.PID << " wants to see the block" << endl;
+      cout << "  here it is:" << endl;
+      v.print_cli();
+      break;
+
+    case SPHERE:
+    //client wants to draw a sphere into the voraldo object
+      //I want to make this at least multithreaded, this time, since every
+      //voxel can be evaluated independently
+      cout << "  " << m.PID << " wants to draw a sphere at ";
+      cout << m.location1x << " " << m.location1y << " " << m.location1z;
+      cout << " with radius " << m.radius1 << endl;
 
       break;
 

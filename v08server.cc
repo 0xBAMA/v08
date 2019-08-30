@@ -6,7 +6,7 @@ int current_client_count;
 
 int main(int argc, char const *argv[]) {
 
-	server s;
+	server s(9,5,5);
 
 	while(s.listen());
 

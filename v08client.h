@@ -16,6 +16,12 @@ using std::endl;
 
 #include "resources/msg.h" //definitions of message types
 
+//for keeping the menu location
+typedef enum menu_loc_t{
+  MAIN_MENU,
+  DRAW_MENU
+} menu_loc;
+
 
 class client{
 public:
@@ -26,10 +32,18 @@ public:
   message recieve_message();
 
 
-  void menu();
+
+  void menu(); // calls show_current_menu(), then takes input, then parses
+                    // an option with deal_with_option(char* opt)
+
+  void show_current_menu();
   void present_top_menu();
+  void present_draw_menu();
+
+  void deal_with_option(std::string opt);
 
 
+  bool done;
 
 
 private:
@@ -42,12 +56,18 @@ private:
   char recv_pipe[12]; //using recv instead of "recieve", since it's also 4 chars
 
 
+  menu_loc current_menu_location;
+
 };
 
 
 //constructor responsible for connecting to the server
 client::client()
 {
+
+  current_menu_location = MAIN_MENU;
+
+  done = false;
 
   client_PID = getpid(); // who am I
   printf("╒═════════════════════════v08═Client══PID═%05d══╕", client_PID);
@@ -105,7 +125,6 @@ client::client()
   // //wait 1 second
   // usleep(1000000);
 
-  menu();
 
 }
 
@@ -140,37 +159,145 @@ client::~client()
 
 void client::menu()
 {
-  while(1)
-  {
-    present_top_menu();
+  show_current_menu();
 
-    char temp;
-    cin >> temp;
+  // char child_message_string[MSG_LENGTH]; //holds the user input
+  // char buf[11]; //allows for comparison
+  //
+  // fgets(child_message_string,MSG_LENGTH,stdin);//get the input
+  //
+  // cout << "  " << child_message_string; //echo user input
+  //
+  // sprintf(buf,"%.10s",child_message_string);//grab the first couple characters
+  //
+  // deal_with_option(buf);
 
-    if(temp == 'n')
-    {
-      break;
+  std::string input;
+
+  cin >> input;
+
+  cout << input;
+
+  deal_with_option(input);
+
+}
+
+
+
+void client::deal_with_option(std::string opt)
+{
+
+  if(current_menu_location == MAIN_MENU)
+  {//main menu options
+
+    cout << opt;
+
+    if(!opt.compare("exit")) //EXIT OPTION
+  	{//exit the while loop, if the user input started with "exit"
+      cout << "exit option selected" << endl;
+
+  	  done = true; //using while(!client.done) in main()
+  	}
+
+
+    if(!opt.compare("time")) //TIME OPTION
+    { //send message of type TIME to the server
+      cout << "time option selected" << endl;
+
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = TIME;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
     }
-    else
+
+    if(!opt.compare("disp")) //DISPLAY OPTION
     {
-      cout << "│unrecognized input                              │";
+      cout << "display option selected" << endl;
+
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = DISPLAY;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
+
+    if(!opt.compare("draw")) //GO TO DRAW SUMENU OPTIONS
+    {
+      cout << "draw menu option selected" << endl;
+
+      current_menu_location = DRAW_MENU;
     }
   }
+
+  if(current_menu_location == DRAW_MENU)
+  {//draw menu options
+
+    if(!opt.compare("sphere"))
+    {
+      cout << "soo you want to draw a sphere, huh?" << endl;
+    }
+
+    if(!opt.compare("back"))
+    {
+      current_menu_location = MAIN_MENU;
+    }
+
+  }
+
+
 }
+
+
+void client::show_current_menu()
+{
+  switch(current_menu_location)
+  {
+    case MAIN_MENU:
+      present_top_menu();
+      break;
+    case DRAW_MENU:
+      present_draw_menu();
+      break;
+  }
+}
+
 
 void client::present_top_menu()
 {
   cout << endl << "╞════════════════════════════════════════════════╡";
-  cout << endl << "╞═MAIN═MENU══════════════════════════════════════╡";
+  cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
-  cout << endl << "│  n: exit                                       │";
+  cout << endl << "│  exit: end program                             │";
+  cout << endl << "│  time: server reports time                     │";
+  cout << endl << "│  disp: server shows block                      │";
+  cout << endl << "│  draw: go to draw submenu                      │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
   cout <<       "\r│>" << std::flush;  //so that this can be there  ^
                                             //at the end of the user prompt
 }
 
+void client::present_draw_menu()
+{
+  cout << endl << "╞════════════════════════════════════════════════╡";
+  cout << endl << "╞DRAW═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "│Enter one of the following, then the enter key. │";
+  cout << endl << "│                                                │";
+  cout << endl << "│  sphere: take sphere dimensions                │";
+  cout << endl << "│  back: go to main menu                         │";
+  cout << endl << "│                                                │";
+  cout << endl << "│>                                               │";
+  cout <<       "\r│>" << std::flush;  //so that this can be there  ^
+                                            //at the end of the user prompt
+}
 
 
 

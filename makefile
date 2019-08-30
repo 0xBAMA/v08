@@ -1,7 +1,7 @@
 CC=g++ -time
 
-MAKE_EXE_CLIENT= -o v08c
-MAKE_EXE_SERVER= -o v08s
+MAKE_EXE_CLIENT= -o cli
+MAKE_EXE_SERVER= -o ser
 
 MAKE_OBJ= -c
 
