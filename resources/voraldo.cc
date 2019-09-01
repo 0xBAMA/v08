@@ -43,6 +43,7 @@ void voraldo::initialize(int x, int y, int z)
 
   srand(time(NULL)); // by default seeded with 1, here seeded with the time
 
+  //fill the block with random values 1-10
   for(int loopx = 0; loopx < x; loopx++)
     for(int loopy = 0; loopy < y; loopy++)
       for(int loopz = 0; loopz < z; loopz++)
@@ -62,6 +63,9 @@ void voraldo::print_cli()
 
   for(int z = 0; z < this->z; z++)
   {
+
+    cout << "slice " << std::hex << z << endl;
+
     for(int y = 0; y < this->y; y++)
     {
       for(int x = 0; x < this->x; x++)
@@ -77,8 +81,37 @@ void voraldo::print_cli()
 
 
       }
-      cout << endl;
+      cout << "  " << std::hex << y << endl;
     }
     cout << endl;
+  }
+
+  for(int x = 0; x < this->x; x++)
+    if(x/16 == 0)
+      cout << " ";
+    else
+      cout << x/16;
+
+  cout << endl;
+
+  for(int x = 0; x < this->x; x++)
+    cout << std::hex << x%16;
+
+  cout << std::dec << endl;
+
+}
+
+void voraldo::draw_sphere(glm::vec3 center, float radius, int fill)
+{
+  for(int z = 0; z < this->z; z++)
+  {
+    for(int y = 0; y < this->y; y++)
+    {
+      for(int x = 0; x < this->x; x++)
+      {
+        if(glm::distance(glm::vec3(x,y,z), center) <= radius)
+          data[x][y][z].val = fill;
+      }
+    }
   }
 }

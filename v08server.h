@@ -404,8 +404,14 @@ void server::take_input_from_user(int i)
       //I want to make this at least multithreaded, this time, since every
       //voxel can be evaluated independently
       cout << "  " << m.PID << " wants to draw a sphere at ";
-      cout << m.location1x << " " << m.location1y << " " << m.location1z;
+      cout << m.position1.x << " " << m.position1.y << " " << m.position1.z;
       cout << " with radius " << m.radius1 << endl;
+
+      cout << endl << "...";
+
+      v.draw_sphere(m.position1, m.radius1, m.fill1);
+
+      cout << "\rdone";
 
       break;
 

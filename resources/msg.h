@@ -1,7 +1,21 @@
 #include <time.h>
 //this would all be the same in both files, so I went ahead and made it a header
 
+
+#ifndef MESSAGE
+#define MESSAGE
+
 #define MSG_LENGTH 100 //maximum length of message
+
+
+//GLM INCLUDES
+
+#define GLM_FORCE_SWIZZLE
+#include "../resources/glm/glm.hpp" 									// general types
+#include "../resources/glm/gtc/matrix_transform.hpp" // orthographic view matrix (glm::ortho( left, right, bottom, top, zNear, zFar ))
+#include "../resources/glm/gtc/type_ptr.hpp" 				// allows the sending of a matrix (for glUniform)
+#include "../resources/glm/gtx/transform.hpp"				// rotate()
+
 
 
 //expresses the type of the incoming message
@@ -38,10 +52,13 @@ typedef struct msg_t {
 
 	//ARGUMENTS TO DRAW FUNCTIONS
 
-	int location1x;
-	int location1y;
-	int location1z;
+	glm::vec3 position1;
 
-	int radius1;
+	float radius1;
+
+	int fill1;
 
 } message; //<--allows declaration with 'msg_t' rather than 'struct msg'
+
+
+#endif

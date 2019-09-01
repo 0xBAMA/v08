@@ -1,4 +1,4 @@
-CC=g++ -time
+CC=g++ -time -std=c++11
 
 MAKE_EXE_CLIENT= -o cli
 MAKE_EXE_SERVER= -o ser

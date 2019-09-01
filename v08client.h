@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <iomanip>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -16,10 +17,23 @@ using std::endl;
 
 #include "resources/msg.h" //definitions of message types
 
+
+//from my operating systems top project
+#define gotoxy(x,y) printf("\033[%d;%dH", (x), (y))
+#define clear() printf("\033[H\033[J")
+
+
+
 //for keeping the menu location
 typedef enum menu_loc_t{
   MAIN_MENU,
-  DRAW_MENU
+
+  DRAW_MENU,
+  SPHERE_CONFIG,
+
+  MASK_MENU,
+
+  UTIL_MENU
 } menu_loc;
 
 
@@ -39,6 +53,7 @@ public:
   void show_current_menu();
   void present_top_menu();
   void present_draw_menu();
+  void present_sphere_config_menu();
 
   void deal_with_option(std::string opt);
 
@@ -161,22 +176,11 @@ void client::menu()
 {
   show_current_menu();
 
-  // char child_message_string[MSG_LENGTH]; //holds the user input
-  // char buf[11]; //allows for comparison
-  //
-  // fgets(child_message_string,MSG_LENGTH,stdin);//get the input
-  //
-  // cout << "  " << child_message_string; //echo user input
-  //
-  // sprintf(buf,"%.10s",child_message_string);//grab the first couple characters
-  //
-  // deal_with_option(buf);
-
   std::string input;
 
   cin >> input;
 
-  cout << input;
+  // cout << input;
 
   deal_with_option(input);
 
@@ -190,11 +194,11 @@ void client::deal_with_option(std::string opt)
   if(current_menu_location == MAIN_MENU)
   {//main menu options
 
-    cout << opt;
+    // cout << opt;
 
     if(!opt.compare("exit")) //EXIT OPTION
   	{//exit the while loop, if the user input started with "exit"
-      cout << "exit option selected" << endl;
+      // cout << "exit option selected" << endl;
 
   	  done = true; //using while(!client.done) in main()
   	}
@@ -202,7 +206,7 @@ void client::deal_with_option(std::string opt)
 
     if(!opt.compare("time")) //TIME OPTION
     { //send message of type TIME to the server
-      cout << "time option selected" << endl;
+      // cout << "time option selected" << endl;
 
       message m;
       m.PID = client_PID;
@@ -214,9 +218,9 @@ void client::deal_with_option(std::string opt)
       close(send_fd);
     }
 
-    if(!opt.compare("disp")) //DISPLAY OPTION
+    if(!opt.compare("display")) //DISPLAY OPTION
     {
-      cout << "display option selected" << endl;
+      // cout << "display option selected" << endl;
 
       message m;
       m.PID = client_PID;
@@ -230,7 +234,7 @@ void client::deal_with_option(std::string opt)
 
     if(!opt.compare("draw")) //GO TO DRAW SUMENU OPTIONS
     {
-      cout << "draw menu option selected" << endl;
+      // cout << "draw menu option selected" << endl;
 
       current_menu_location = DRAW_MENU;
     }
@@ -241,7 +245,9 @@ void client::deal_with_option(std::string opt)
 
     if(!opt.compare("sphere"))
     {
-      cout << "soo you want to draw a sphere, huh?" << endl;
+      // sphere configuration menu
+      current_menu_location = SPHERE_CONFIG;
+
     }
 
     if(!opt.compare("back"))
@@ -257,28 +263,45 @@ void client::deal_with_option(std::string opt)
 
 void client::show_current_menu()
 {
+  clear();
   switch(current_menu_location)
   {
     case MAIN_MENU:
       present_top_menu();
       break;
+
     case DRAW_MENU:
       present_draw_menu();
+      break;
+    case SPHERE_CONFIG:
+      present_sphere_config_menu();
+      break;
+
+    case MASK_MENU:
+      break;
+
+    case UTIL_MENU:
       break;
   }
 }
 
 
+
+
 void client::present_top_menu()
 {
-  cout << endl << "╞════════════════════════════════════════════════╡";
+  cout << endl << "╒════════════════════════════════════════════════╕";
   cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
-  cout << endl << "│  exit: end program                             │";
-  cout << endl << "│  time: server reports time                     │";
-  cout << endl << "│  disp: server shows block                      │";
-  cout << endl << "│  draw: go to draw submenu                      │";
+  cout << endl << "│  time : server reports time                    │";
+  cout << endl << "│  disp : server shows block                     │";
+  cout << endl << "│                                                │";
+  cout << endl << "│  draw : go to draw submenu                     │";
+  cout << endl << "│  mask : go to masking submenu                  │"; //to do
+  cout << endl << "│  util : go to utilities submenu                │"; //to do
+  cout << endl << "│                                                │";
+  cout << endl << "│  exit : end program                            │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
   cout <<       "\r│>" << std::flush;  //so that this can be there  ^
@@ -287,17 +310,158 @@ void client::present_top_menu()
 
 void client::present_draw_menu()
 {
-  cout << endl << "╞════════════════════════════════════════════════╡";
+  cout << endl << "╒════════════════════════════════════════════════╕";
+  cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "╒════════════════════════════════════════════════╕";
   cout << endl << "╞DRAW═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
-  cout << endl << "│  sphere: take sphere dimensions                │";
+  cout << endl << "│  sphere: go to sphere config menu              │";
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
   cout <<       "\r│>" << std::flush;  //so that this can be there  ^
                                             //at the end of the user prompt
 }
+
+void client::present_sphere_config_menu()
+{
+
+  std::string input = "nut";
+
+  // cout << input;
+
+  float center_x, center_y, center_z;
+
+  center_x = 0.0f;
+  center_y = 0.0f;
+  center_z = 0.0f;
+
+  float radius = 0.0f;
+
+  int fill = 0;
+
+  while(1)
+  {
+    clear();
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞DRAW═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞SPHERE═CONFIG═MENU══ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "│Enter one of the following, then the enter key. │";
+    cout << endl << "│                                                │";
+    cout << endl << "│      center x: " << std::setw(5) << std::setprecision(5) << center_x
+    << "    y: " << std::setw(5) << std::setprecision(5)<< center_y
+    << "    z: " << std::setw(5) << std::setprecision(5)<< center_z
+                              << "   │";
+    cout << endl << "│        radius :" <<  std::setw(5) << std::setprecision(5) << radius << "                           │";
+    cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
+
+    cout << endl << "│                                                │";
+    cout << endl << "│  x : set the center x value                    │";
+    cout << endl << "│  y : set the center y value                    │";
+    cout << endl << "│  z : set the center z value                    │";
+    cout << endl << "│  r : set the radius value                      │";
+    cout << endl << "│  f : set the fill value                        │";
+    cout << endl << "│                                                │";
+
+    cout << endl << "│  display: server shows block                   │";
+    cout << endl << "│                                                │";
+
+
+    cout << endl << "│  send : server will draw with current values   │";
+
+
+    cout << endl << "│  back: go to draw menu                         │";
+    cout << endl << "│                                                │";
+    cout << endl << "│>                                               │";
+    cout <<       "\r│>" << std::flush;  //so that this can be there  ^
+                                              //at the end of the user prompt
+
+    cin >> input;
+
+    if(!input.compare("x"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> center_x;
+    }
+
+    if(!input.compare("y"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> center_y;
+    }
+
+    if(!input.compare("z"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> center_z;
+    }
+
+    if(!input.compare("r"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> radius;
+    }
+
+    if(!input.compare("f"))
+    {
+      cout << "What is it? (0 to 9)" << endl << " >";
+      cin >> fill;
+    }
+
+    if(!input.compare("send"))
+    {
+      cout << "sending...";
+
+      message m;
+
+
+
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = SPHERE;
+
+      m.position1 = glm::vec3(center_x,center_y,center_z);
+      m.radius1 = radius;
+      m.fill1 = fill;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+
+
+      cout << "\rsent        " << endl;
+    }
+
+    if(!input.compare("display"))
+    {
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = DISPLAY;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
+
+    if(!input.compare("back"))
+      break;
+
+  }
+
+  current_menu_location = DRAW_MENU;
+  show_current_menu();  //the combination of these two lines puts you back
+    //at a prompt for the draw menu, which outputs a menu then this config
+    //function returns to menu() for cin to take in the option (from that
+    //draw menu) and then calls deal_with_option() with whatever was cin.
+    //In any event - it works.
+
+}
+
 
 
 
