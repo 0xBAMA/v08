@@ -98,6 +98,7 @@ void voraldo::print_cli()
     cout << std::hex << x%16;
 
   cout << std::dec << endl;
+  
 
 }
 
