@@ -2,7 +2,7 @@
 
 int current_client_count;
 
-
+server * s;
 
 int main(int argc, char const *argv[])
 {
@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
 		cout << "standard dimensions used (16x16x16)" << endl;
 	}
 
-	server s(x,y,z);
+	s = new server(x,y,z);
 
-	while(s.listen());
+	while(s->listen());
 
 	return 0;
 

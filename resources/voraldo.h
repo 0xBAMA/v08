@@ -9,6 +9,8 @@ using std::vector;
 
 
 
+
+
 typedef struct vox_t
 {
 
@@ -24,6 +26,7 @@ public:
 
   void initialize(int x, int y, int z);
   void print_cli();
+
   void draw_sphere(glm::vec3 center, float radius, int fill);
 
 private:

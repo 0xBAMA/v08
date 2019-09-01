@@ -17,6 +17,15 @@
 #include "../resources/glm/gtx/transform.hpp"				// rotate()
 
 
+typedef struct rgba_t{
+
+  unsigned short red;
+  unsigned short green;
+  unsigned short blue;
+  unsigned short alpha;
+
+}rgba;
+
 
 //expresses the type of the incoming message
 typedef enum msg_type_t{

@@ -42,26 +42,38 @@ public:
   client();
   ~client();
 
-  void send_message(message m);
-  message recieve_message();
 
-
+  bool done;
 
   void menu(); // calls show_current_menu(), then takes input, then parses
                     // an option with deal_with_option(char* opt)
 
+
+
+
+
+
+private:
+
+
+  void send_message(message m);
+  message recieve_message();
+
+
   void show_current_menu();
   void present_top_menu();
+
   void present_draw_menu();
-  void present_sphere_config_menu();
+    void present_sphere_config_menu();
+
+  void present_mask_menu();
+
+  void present_util_menu();
+
 
   void deal_with_option(std::string opt);
 
 
-  bool done;
-
-
-private:
   int client_PID;
   int server_initial_pipe;
   int client_send_pipe,client_recv_pipe;
@@ -196,12 +208,12 @@ void client::deal_with_option(std::string opt)
 
     // cout << opt;
 
+    //exit the while loop, if the user input started with "exit"
     if(!opt.compare("exit")) //EXIT OPTION
-  	{//exit the while loop, if the user input started with "exit"
-      // cout << "exit option selected" << endl;
-
   	  done = true; //using while(!client.done) in main()
-  	}
+
+
+
 
 
     if(!opt.compare("time")) //TIME OPTION
@@ -218,6 +230,8 @@ void client::deal_with_option(std::string opt)
       close(send_fd);
     }
 
+
+
     if(!opt.compare("display")) //DISPLAY OPTION
     {
       // cout << "display option selected" << endl;
@@ -233,12 +247,18 @@ void client::deal_with_option(std::string opt)
     }
 
     if(!opt.compare("draw")) //GO TO DRAW SUMENU OPTIONS
-    {
-      // cout << "draw menu option selected" << endl;
-
       current_menu_location = DRAW_MENU;
-    }
+
+
+    if(!opt.compare("mask"))//GO TO MASK SUMENU OPTIONS
+      current_menu_location = MASK_MENU;
+
+    if(!opt.compare("util"))//GO TO UTIL SUMENU OPTIONS
+      current_menu_location = UTIL_MENU;
+
   }
+
+
 
   if(current_menu_location == DRAW_MENU)
   {//draw menu options
@@ -249,6 +269,44 @@ void client::deal_with_option(std::string opt)
       current_menu_location = SPHERE_CONFIG;
 
     }
+
+    if(!opt.compare("back"))
+    {
+      current_menu_location = MAIN_MENU;
+    }
+
+  }
+
+
+
+  if(current_menu_location == MASK_MENU)
+  {//mask menu options
+
+    if(!opt.compare("sphere"))
+    {
+      // sphere configuration menu
+      current_menu_location = SPHERE_CONFIG;
+
+    }
+
+    if(!opt.compare("back"))
+    {
+      current_menu_location = MAIN_MENU;
+    }
+
+  }
+
+
+
+  if(current_menu_location == UTIL_MENU)
+  {//mask menu options
+
+    // if(!opt.compare("sphere"))
+    // {
+    //   // sphere configuration menu
+    //   current_menu_location = SPHERE_CONFIG;
+    //
+    // }
 
     if(!opt.compare("back"))
     {
@@ -278,9 +336,11 @@ void client::show_current_menu()
       break;
 
     case MASK_MENU:
+      present_mask_menu();
       break;
 
     case UTIL_MENU:
+      present_util_menu();
       break;
   }
 }
@@ -317,6 +377,38 @@ void client::present_draw_menu()
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
   cout << endl << "│  sphere: go to sphere config menu              │";
+  cout << endl << "│  back: go to main menu                         │";
+  cout << endl << "│                                                │";
+  cout << endl << "│>                                               │";
+  cout <<       "\r│>" << std::flush;  //so that this can be there  ^
+                                            //at the end of the user prompt
+}
+
+void client::present_mask_menu()
+{
+  cout << endl << "╒════════════════════════════════════════════════╕";
+  cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "╒════════════════════════════════════════════════╕";
+  cout << endl << "╞MASK═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "│Enter one of the following, then the enter key. │";
+  cout << endl << "│                                                │";
+  cout << endl << "│  sphere: go to sphere config menu              │";
+  cout << endl << "│  back: go to main menu                         │";
+  cout << endl << "│                                                │";
+  cout << endl << "│>                                               │";
+  cout <<       "\r│>" << std::flush;  //so that this can be there  ^
+                                            //at the end of the user prompt
+}
+
+void client::present_util_menu()
+{
+  cout << endl << "╒════════════════════════════════════════════════╕";
+  cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "╒════════════════════════════════════════════════╕";
+  cout << endl << "╞UTILITY═MENU══ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+  cout << endl << "│Enter one of the following, then the enter key. │";
+  cout << endl << "│                                                │";
+  // cout << endl << "│  sphere: go to sphere config menu              │";
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
@@ -458,7 +550,8 @@ void client::present_sphere_config_menu()
     //at a prompt for the draw menu, which outputs a menu then this config
     //function returns to menu() for cin to take in the option (from that
     //draw menu) and then calls deal_with_option() with whatever was cin.
-    //In any event - it works.
+    //In any event - it works. I can do similar stuff for drawing other shapes,
+    //since they don't really have anything like sub-menus themselves
 
 }
 
