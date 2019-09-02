@@ -217,6 +217,12 @@ int server::listen()  //call this from the glut idle function
     // cout << "no other fds" << endl;
   }
 
+
+
+  //***NEED TO CLOSE ALL FDs BEFORE THIS FUNCTION RETURNS***
+  //  otherwise, it keeps allocating, and runs out
+
+
   return 1; //do this to continue, and do this loop again
   // return 0; //do this to exit, in the real main
 

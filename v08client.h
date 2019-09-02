@@ -460,14 +460,9 @@ void client::present_sphere_config_menu()
     cout << endl << "│  r : set the radius value                      │";
     cout << endl << "│  f : set the fill value                        │";
     cout << endl << "│                                                │";
-
     cout << endl << "│  display: server shows block                   │";
-    cout << endl << "│                                                │";
-
-
     cout << endl << "│  send : server will draw with current values   │";
-
-
+    cout << endl << "│                                                │";
     cout << endl << "│  back: go to draw menu                         │";
     cout << endl << "│                                                │";
     cout << endl << "│>                                               │";

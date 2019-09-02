@@ -76,6 +76,8 @@ void voraldo::print_cli()
           cout << "\e[34m";
         if((int)data[x][y][z].val %4 == 0)
           cout << "\e[35m";
+        if((int)data[x][y][z].val == 7)
+          cout << "\e[31m";
 
         cout << data[x][y][z].val << "\e[0m"; //reset colors
 
