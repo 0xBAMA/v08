@@ -2,6 +2,7 @@
 
 int current_client_count;
 
+//want this accessible in global scope
 server * s;
 
 int main(int argc, char const *argv[])

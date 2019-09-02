@@ -1,4 +1,4 @@
-CC=g++ -time -std=c++11
+CC=g++ -time -std=c++11 -O3
 
 MAKE_EXE_CLIENT= -o cli
 MAKE_EXE_SERVER= -o ser
@@ -43,7 +43,7 @@ voraldo.o: resources/voraldo.h resources/voraldo.cc
 	@echo
 	@echo -e "\e[31mBUILDING SERVER EXECUTABLE\e[0m"
 	@echo
-	$(CC) $(MAKE_OBJ) resources/voraldo.cc
+	$(CC) $(MAKE_OBJ) resources/voraldo.cc resources/lodepng.cpp -ansi
 
 clean:
 	@echo

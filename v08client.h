@@ -392,7 +392,9 @@ void client::present_mask_menu()
   cout << endl << "╞MASK═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
-  cout << endl << "│  sphere: go to sphere config menu              │";
+  cout << endl << "│  invert: send message to invert mask           │";
+  cout << endl << "│  unmask: send message to unmask all cells      │";
+
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";

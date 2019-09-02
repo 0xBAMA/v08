@@ -345,6 +345,8 @@ void server::read_from_server_np()
 
 void server::take_input_from_user(int i)
 {
+  glm::vec3 center;
+
   time_t temp_time;
   message m,r;
 
@@ -405,11 +407,24 @@ void server::take_input_from_user(int i)
       //voxel can be evaluated independently
       cout << "  " << m.PID << " wants to draw a sphere at ";
       cout << m.position1.x << " " << m.position1.y << " " << m.position1.z;
+
+
       cout << " with radius " << m.radius1 << endl;
 
       cout << endl << "...";
 
-      v.draw_sphere(m.position1, m.radius1, m.fill1);
+      // cout << m.position1.x << " " << m.position1.y << " " << m.position1.z << endl;
+
+      // v.draw_sphere(m.position1.x,m.position1.y,m.position1.z, m.radius1, m.fill1);
+
+      // center.x = m.position1.x;
+      // center.y = m.position1.y;
+      // center.z = m.position1.z;
+
+      center = glm::vec3(m.position1.x, m.position1.y, m.position1.z);
+
+      v.draw_sphere(center, m.radius1, m.fill1);
+
 
       cout << "\rdone";
 

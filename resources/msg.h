@@ -17,6 +17,15 @@
 #include "../resources/glm/gtx/transform.hpp"				// rotate()
 
 
+
+
+
+// #define vec3 glm::vec3
+// #define vec4 glm::vec4
+// #define mat3 glm::mat3
+// #define mat4 glm::mat4
+
+
 typedef struct rgba_t{
 
   unsigned short red;
