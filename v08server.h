@@ -209,7 +209,7 @@ int server::listen()  //call this from the glut idle function
       {
         cout << "\ruser " << i << " has data ready:                " << endl;
     //then deal with the message on user[i]'s <PID>_send pipe
-        close(fds[i].fd);
+        // close(fds[i].fd);
         take_input_from_user(i-1);  //to array index
       }
     }
@@ -220,7 +220,10 @@ int server::listen()  //call this from the glut idle function
 
 
   //***NEED TO CLOSE ALL FDs BEFORE THIS FUNCTION RETURNS***
-  //  otherwise, it keeps allocating, and runs out
+  //  otherwise, it keeps allocating, and runs out of fds
+
+  for(int i = 0; i <= num_clients; i++)
+    close(fds[i].fd);
 
 
   return 1; //do this to continue, and do this loop again
