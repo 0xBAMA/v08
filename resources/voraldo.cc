@@ -102,28 +102,6 @@ void voraldo::print_cli()
 
 }
 
-void voraldo::draw_sphere(glm::vec3 center, float radius, int fill, bool draw, bool mask)
-{
-
-  // vec3 center = vec3(ix,iy,iz);
-
-  cout << center.x << center.y << center.z;
-  //this access causes a seg fault
-
-  for(int z = 0; z < this->z; z++)
-  {
-    for(int y = 0; y < this->y; y++)
-    {
-      for(int x = 0; x < this->x; x++)
-      {
-
-        // if(glm::distance(glm::vec3(x,y,z), center) <= radius)
-        //   data[x][y][z].val = fill;
-
-      }
-    }
-  }
-}
 
 bool voraldo::planetest(glm::vec3 plane_point, glm::vec3 plane_normal, glm::vec3 test_point)
 {

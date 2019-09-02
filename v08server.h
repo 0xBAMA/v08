@@ -423,7 +423,9 @@ void server::take_input_from_user(int i)
 
       center = glm::vec3(m.position1.x, m.position1.y, m.position1.z);
 
-      v.draw_sphere(center, m.radius1, m.fill1);
+      cout << center.x << " " << center.y << " " << center.z << endl;
+
+      v.draw_sphere(glm::vec3(center.x,center.y,center.z), m.radius1, m.fill1);
 
 
       cout << "\rdone";

@@ -3,11 +3,24 @@
 
 void func(glm::vec3 in);
 
+class bar{
+public:
+  void func(glm::vec3 in)
+  {
+    std::cout << in.x << in.y << in.z << std::endl;
+  }
+
+};
+
 int main(int argc, char const *argv[]) {
 
   glm::vec3 b;
+  bar c;
+
 
   b = glm::vec3(0,0,0);
+
+  c.func(b);
 
   func(b);
 
@@ -16,7 +29,5 @@ int main(int argc, char const *argv[]) {
 
 void func(glm::vec3 in)
 {
-  std::cout << in.x << " " << in.y << " " << in.z << std::endl;
+  std::cout << in.x << in.y << in.z << std::endl;
 }
-
-///... so what's going on?
