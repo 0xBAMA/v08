@@ -18,7 +18,7 @@ using std::endl;
 #include "resources/msg.h" //definitions of message types
 
 
-//from my operating systems top project
+//from my operating systems project implementing a rudimentary version of top
 #define gotoxy(x,y) printf("\033[%d;%dH", (x), (y))
 #define clear() printf("\033[H\033[J")
 
@@ -198,8 +198,6 @@ void client::menu()
 
 }
 
-
-
 void client::deal_with_option(std::string opt)
 {
 
@@ -318,7 +316,6 @@ void client::deal_with_option(std::string opt)
 
 }
 
-
 void client::show_current_menu()
 {
   clear();
@@ -344,9 +341,6 @@ void client::show_current_menu()
       break;
   }
 }
-
-
-
 
 void client::present_top_menu()
 {
@@ -431,6 +425,11 @@ void client::present_sphere_config_menu()
   center_y = 0.0f;
   center_z = 0.0f;
 
+  bool draw, mask;
+
+  draw = true;
+  mask = false;
+
   float radius = 0.0f;
 
   int fill = 0;
@@ -452,6 +451,8 @@ void client::present_sphere_config_menu()
                               << "   │";
     cout << endl << "│        radius :" <<  std::setw(5) << std::setprecision(5) << radius << "                           │";
     cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
+    cout << endl << "│                                                │";
+    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                       │";
 
     cout << endl << "│                                                │";
     cout << endl << "│  x : set the center x value                    │";
@@ -459,6 +460,9 @@ void client::present_sphere_config_menu()
     cout << endl << "│  z : set the center z value                    │";
     cout << endl << "│  r : set the radius value                      │";
     cout << endl << "│  f : set the fill value                        │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  m : toggle value of mask                      │";
+    cout << endl << "│  d : toggle value of draw                      │";
     cout << endl << "│                                                │";
     cout << endl << "│  display: server shows block                   │";
     cout << endl << "│  send : server will draw with current values   │";
@@ -501,6 +505,16 @@ void client::present_sphere_config_menu()
       cin >> fill;
     }
 
+    if(!input.compare("d"))
+    {
+      draw = draw ? false : true;
+    }
+
+    if(!input.compare("m"))
+    {
+      mask = mask ? false : true;
+    }
+
     if(!input.compare("send"))
     {
       cout << "sending...";
@@ -516,6 +530,9 @@ void client::present_sphere_config_menu()
       m.position1 = glm::vec3(center_x,center_y,center_z);
       m.radius1 = radius;
       m.fill1 = fill;
+
+      m.mask = mask;
+      m.draw = draw;
 
       int send_fd = open(send_pipe, O_WRONLY);
       write(send_fd, (char*)&m, sizeof(message));

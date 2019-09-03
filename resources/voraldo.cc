@@ -1,5 +1,6 @@
 #include "voraldo.h"
-
+#include "perlin.h"
+//simple to use implementation of 3d perlin noise
 
 
 
@@ -47,14 +48,15 @@ void voraldo::initialize(int x, int y, int z)
   for(int loopx = 0; loopx < x; loopx++)
     for(int loopy = 0; loopy < y; loopy++)
       for(int loopz = 0; loopz < z; loopz++)
+      {
         data[loopx][loopy][loopz].val = ((int)rand()) % 10;
+        data[loopx][loopy][loopz].mask = false;
+      }
 
-
-  data[0][0][0].val = 1.0f;
-  data[2][2][2].val = 1.0f;
+  // data[0][0][0].val = 1.0f;
+  // data[2][2][2].val = 1.0f;
 
 }
-
 
 //very simple
 void voraldo::print_cli()
@@ -105,6 +107,50 @@ void voraldo::print_cli()
 }
 
 
+void voraldo::draw_perlin_noise(float scale, float threshold, int fill, bool draw, bool mask)
+{
+  PerlinNoise p;
+
+  if(threshold >= 0)
+  {
+    for( int x = 0; x < this->x; x++ )
+    {
+      for( int y = 0; y < this->y; y++ )
+      {
+        for( int z = 0; z < this->z; z++ )
+        {//per voxel
+
+          if( p.noise( scale*x, scale*y, scale*z ) < threshold )
+          {
+            draw_point( glm::vec3( x, y, z ), fill, draw, mask );
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    threshold = std::abs(threshold);
+
+    for( int x = 0; x < this->x; x++ )
+    {
+      for( int y = 0; y < this->y; y++ )
+      {
+        for( int z = 0; z < this->z; z++ )
+        {//per voxel
+
+          if( p.noise( scale*x, scale*y, scale*z ) > threshold )
+          {
+            draw_point( glm::vec3( x, y, z ), fill, draw, mask );
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
 bool voraldo::planetest(glm::vec3 plane_point, glm::vec3 plane_normal, glm::vec3 test_point)
 {
   //return false if the point is above the plane
@@ -134,7 +180,8 @@ bool voraldo::planetest(glm::vec3 plane_point, glm::vec3 plane_normal, glm::vec3
 }
 
 bool voraldo::intersect_ray_bbox(glm::vec3 bbox_min, glm::vec3 bbox_max, glm::vec3 ray_org, glm::vec3 ray_dir, float &tmin, float &tmax, float t0, float t1)
-{/*
+{
+/*
  * Ray-box intersection using IEEE numerical properties to ensure that the
  * test is both robust and efficient, as described in:
  *

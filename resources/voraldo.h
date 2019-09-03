@@ -12,7 +12,6 @@ using std::vector;
 // Good, simple png library
 
 
-
 #ifndef VORALDO
 #define VORALDO
 
@@ -22,6 +21,7 @@ typedef struct vox_t
 {
 
   float val;
+  bool mask;
 
 }vox;
 
@@ -45,7 +45,36 @@ public:
 
 
   //self explanatory, uses floor() to get nearest index
-  void draw_point(glm::vec3 position, vox set, bool draw=true, bool mask=false);
+  void draw_point(glm::vec3 position, int fill, bool draw=true, bool mask=false)
+  {
+    //do the checking for mask value here - abstracts this away
+    //so that other draw functions do not have to do any checking
+
+    int x,y,z;
+
+    x = std::floor(position.x);
+    y = std::floor(position.y);
+    z = std::floor(position.z);
+
+
+    if(!data[x][y][z].mask)
+    {//not masked, so it's ok to manipulate this data
+
+      if(draw)  //user wants to draw
+      {
+        data[x][y][z].val = fill;
+        data[x][y][z].mask = mask;
+      }
+      else
+      {
+        data[x][y][z].mask = mask;
+      }
+
+    }
+
+    // else, it is masked, and should not be drawn to
+
+  }
 
   //draws a triangle of the given thickness between points v0,v1 and v2
   void draw_triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, float thickness, int fill, bool draw=true, bool mask=false);
@@ -62,7 +91,7 @@ public:
         {
 
           if(glm::distance(glm::vec3(x,y,z), center_point) <= radius)
-            data[x][y][z].val = fill;
+            draw_point(glm::vec3(x,y,z), fill, draw, mask);
 
         }
       }

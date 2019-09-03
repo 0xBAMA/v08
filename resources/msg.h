@@ -76,6 +76,9 @@ typedef struct msg_t {
 
 	int fill1;
 
+	bool draw;
+	bool mask;
+
 } message; //<--allows declaration with 'msg_t' rather than 'struct msg'
 
 

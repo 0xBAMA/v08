@@ -22,6 +22,7 @@ using std::endl;
 #include "resources/msg.h" //definitions of message types
 #include "resources/voraldo.h"
 
+#define MAX_USERS 10 //arbitrary
 
 typedef struct user_t
 {
@@ -91,11 +92,6 @@ private:
 
 };
 
-#define MAX_USERS 10
-
-
-
-
 server::server(int x, int y, int z)
 {
    server_PID = getpid();
@@ -139,8 +135,6 @@ server::server(int x, int y, int z)
    }
 }
 
-
-
 server::~server()
 {
 
@@ -152,11 +146,7 @@ server::~server()
 
 }
 
-
-
-
-
-int server::listen()  //call this from the glut idle function
+int server::listen()  //call this from the glut idle function?
 {
 
   // read_from_server_np();
@@ -168,6 +158,10 @@ int server::listen()  //call this from the glut idle function
 
   int num_clients = users.size();
   cout << "\rthere are " << num_clients << " clients... ";
+
+  // cout << endl;
+
+  // list_users();
 
 // info from http://www.unixguide.net/unix/programming/2.1.2.shtml
 // and also  http://man7.org/linux/man-pages/man2/open.2.html
@@ -209,12 +203,17 @@ int server::listen()  //call this from the glut idle function
       {
         cout << "\ruser " << i << " has data ready:                " << endl;
     //then deal with the message on user[i]'s <PID>_send pipe
-        // close(fds[i].fd);
         take_input_from_user(i-1);  //to array index
       }
+      close(fds[i].fd);
     }
+  }
+  else
+  {
+    close(fds[0].fd);
 
-    // cout << "no other fds" << endl;
+    for(int i = 1; i <= num_clients; i++)
+      close(fds[i].fd);
   }
 
 
@@ -222,16 +221,14 @@ int server::listen()  //call this from the glut idle function
   //***NEED TO CLOSE ALL FDs BEFORE THIS FUNCTION RETURNS***
   //  otherwise, it keeps allocating, and runs out of fds
 
-  for(int i = 0; i <= num_clients; i++)
-    close(fds[i].fd);
+  // for(int i = 0; i <= num_clients; i++)
+  //   close(fds[i].fd);
 
 
   return 1; //do this to continue, and do this loop again
   // return 0; //do this to exit, in the real main
 
 }
-
-
 
 void server::list_users()
 {
@@ -270,11 +267,6 @@ void server::list_users()
 
   cout << endl;
 }
-
-
-
-
-
 
 void server::read_from_server_np()
 {
@@ -351,7 +343,6 @@ void server::read_from_server_np()
   }
 }
 
-
 void server::take_input_from_user(int i)
 {
   glm::vec3 center;
@@ -422,19 +413,12 @@ void server::take_input_from_user(int i)
 
       cout << endl << "...";
 
-      // cout << m.position1.x << " " << m.position1.y << " " << m.position1.z << endl;
-
-      // v.draw_sphere(m.position1.x,m.position1.y,m.position1.z, m.radius1, m.fill1);
-
-      // center.x = m.position1.x;
-      // center.y = m.position1.y;
-      // center.z = m.position1.z;
 
       center = glm::vec3(m.position1.x, m.position1.y, m.position1.z);
 
       cout << center.x << " " << center.y << " " << center.z << endl;
 
-      v.draw_sphere(glm::vec3(center.x,center.y,center.z), m.radius1, m.fill1);
+      v.draw_sphere(glm::vec3(center.x,center.y,center.z), m.radius1, m.fill1, m.draw, m.mask);
 
 
       cout << "\rdone";
