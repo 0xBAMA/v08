@@ -45,7 +45,12 @@ typedef enum msg_type_t{
 
 	STATUS,		 //tells the server to report status info
 	TIME,			//tells the server to report the current time of day
-	DISPLAY, //tells the server to do the
+	DISPLAY, //tells the server to do the command line output
+
+	UNMASK_ALL,	//all cells mask set to false
+	INVERT_MASK, //all cells go false->true and true->false
+	MASK_NONZERO, //if val is nonzero, set mask to true
+
 
 	NOISE,		//user wants to draw perlin noise
 	SPHERE			//user wants to draw a sphere into the voraldo object

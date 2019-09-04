@@ -57,7 +57,68 @@ void voraldo::initialize(int x, int y, int z)
   // data[2][2][2].val = 1.0f;
 }
 
-//very simple
+bool voraldo::get_mask(glm::vec3 index)
+{
+  int x = floor(index.x);
+  int y = floor(index.y);
+  int z = floor(index.z);
+
+  return data[x][y][z].mask;
+}
+
+void voraldo::set_mask(glm::vec3 index, bool in)
+{
+  int x = floor(index.x);
+  int y = floor(index.y);
+  int z = floor(index.z);
+
+  data[x][y][z].mask = in;
+}
+
+float voraldo::get_val(glm::vec3 index)
+{
+  int x = floor(index.x);
+  int y = floor(index.y);
+  int z = floor(index.z);
+
+  return data[x][y][z].val;
+}
+
+void voraldo::set_val(glm::vec3 index, float in)
+{
+  int x = floor(index.x);
+  int y = floor(index.y);
+  int z = floor(index.z);
+
+  data[x][y][z].val = in;
+}
+
+void voraldo::mask_unmask_all()
+{
+  for(int z = 0; z < this->z; z++)
+    for(int y = 0; y < this->y; y++)
+      for(int x = 0; x < this->x; x++)
+        set_mask(glm::vec3(x,y,z), false);
+}
+
+void voraldo::mask_invert_mask()
+{
+  for(int z = 0; z < this->z; z++)
+    for(int y = 0; y < this->y; y++)
+      for(int x = 0; x < this->x; x++)
+        set_mask(glm::vec3(x,y,z), get_mask(glm::vec3(x,y,z)) ? false : true);
+}
+
+void voraldo::mask_all_nonzero()
+{
+  for(int z = 0; z < this->z; z++)
+    for(int y = 0; y < this->y; y++)
+      for(int x = 0; x < this->x; x++)
+        if(get_val(glm::vec3(x,y,z)) != 0.0f)
+          set_mask(glm::vec3(x,y,z), true);
+}
+
+//very simple placeholder output
 void voraldo::print_cli()
 {
   cout << endl;

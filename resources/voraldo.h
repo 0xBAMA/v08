@@ -191,9 +191,16 @@ public:
 
 private:
 
-  vox get_data_by_vector_index(glm::vec3 index);
-  vox set_data_by_vector_index(glm::vec3 index, vox set, bool draw=true,
-    bool mask=false, bool force=false);
+  bool get_mask(glm::vec3 index);
+  void set_mask(glm::vec3 index, bool in);
+
+  float get_val(glm::vec3 index);
+  void set_val(glm::vec3 index, float in);
+
+  //this is temporarily a float
+  // float get_data_by_vector_index(glm::vec3 index);
+  // void set_data_by_vector_index(glm::vec3 index, vox set, bool draw=true,
+  //   bool mask=false, bool force=false);
 
   bool planetest(glm::vec3 plane_point, glm::vec3 plane_normal, glm::vec3 test_point);
     // returns false if the point is above the plane, true if it is above
