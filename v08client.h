@@ -263,25 +263,14 @@ void client::deal_with_option(std::string opt)
   if(current_menu_location == DRAW_MENU)
   {//draw menu options
 
-    if(!opt.compare("noise"))
-    {
-      // sphere configuration menu
+    if(!opt.compare("noise")) // sphere configuration menu
       current_menu_location = NOISE_CONFIG;
 
-    }
-
-
-    if(!opt.compare("sphere"))
-    {
-      // sphere configuration menu
+    if(!opt.compare("sphere")) // sphere configuration menu
       current_menu_location = SPHERE_CONFIG;
 
-    }
-
     if(!opt.compare("back"))
-    {
       current_menu_location = MAIN_MENU;
-    }
 
   }
 
@@ -290,10 +279,14 @@ void client::deal_with_option(std::string opt)
   if(current_menu_location == MASK_MENU)
   {//mask menu options
 
+    if(!opt.compare("invert")) //send INVERT_MASK
+
+    if(!opt.compare("unmask"))  //send UNMASK_ALL
+
+    if(!opt.compare("nonzero")) //send MASK_NONZERO
+
     if(!opt.compare("back"))
-    {
       current_menu_location = MAIN_MENU;
-    }
 
   }
 
@@ -302,17 +295,9 @@ void client::deal_with_option(std::string opt)
   if(current_menu_location == UTIL_MENU)
   {//mask menu options
 
-    // if(!opt.compare("sphere"))
-    // {
-    //   // sphere configuration menu
-    //   current_menu_location = SPHERE_CONFIG;
-    //
-    // }
-
     if(!opt.compare("back"))
-    {
       current_menu_location = MAIN_MENU;
-    }
+
 
   }
 
@@ -395,7 +380,8 @@ void client::present_mask_menu()
   cout << endl << "│                                                │";
   cout << endl << "│  invert: send message to invert mask           │";
   cout << endl << "│  unmask: send message to unmask all cells      │";
-
+  cout << endl << "│  nonzero: send message to unmask all cells != 0│";
+  cout << endl << "│                                                │";
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
@@ -460,7 +446,7 @@ void client::present_noise_config_menu()
     cout << endl << "│        thresh :  " <<  std::setw(5) << std::setprecision(5) << threshold << "                         │";
 
     cout << endl << "│                                                │";
-    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                     │";
+    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                    │";
 
     cout << endl << "│                                                │";
     cout << endl << "│  s : set the scale value                       │";

@@ -75,6 +75,9 @@ void voraldo::set_mask(glm::vec3 index, bool in)
   data[x][y][z].mask = in;
 }
 
+//this is easier than messing with passing around things of type vox
+//eventually it will deal with straight 16-bit RGBA values, so they can
+//be passed directly to the GPU
 float voraldo::get_val(glm::vec3 index)
 {
   int x = floor(index.x);
