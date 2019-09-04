@@ -232,23 +232,7 @@ int server::listen()  //call this from the glut idle function?
 
 void server::list_users()
 {
-  // cout << "listing listing listing" << endl;
-
   cout << endl;
-
-
-  // generate another user to confirm that the listing works
-
-  // user u;
-  // u.PID = 420;
-  // sprintf(u.initial_message_text, "INITIAL USERNAME");
-  // sprintf(u.client_send_str, "butt %s", "ssss");
-  // sprintf(u.client_recv_str, "nugg %s", "SSSS");
-  // u.time_of_connection = time(NULL);
-  // u.time_of_last_operation = time(NULL);
-  // users.push_back(u);
-
-
 
   cout << "List of all present users:" << endl << endl << endl;
   int count = 1;
@@ -401,6 +385,17 @@ void server::take_input_from_user(int i)
       v.print_cli();
       break;
 
+    case NOISE:
+      cout << "  " << m.PID << " wants to draw noise with ";
+      cout << "scale = " << m.scale << " and threshold = " << m.threshold;
+
+      cout << endl << "...";
+
+      v.draw_perlin_noise(m.scale, m.threshold,m.fill1,m.draw,m.mask);
+
+      cout << "\rdone";
+      break;
+
     case SPHERE:
     //client wants to draw a sphere into the voraldo object
       //I want to make this at least multithreaded, this time, since every
@@ -416,7 +411,7 @@ void server::take_input_from_user(int i)
 
       center = glm::vec3(m.position1.x, m.position1.y, m.position1.z);
 
-      cout << center.x << " " << center.y << " " << center.z << endl;
+      // cout << center.x << " " << center.y << " " << center.z << endl;
 
       v.draw_sphere(glm::vec3(center.x,center.y,center.z), m.radius1, m.fill1, m.draw, m.mask);
 

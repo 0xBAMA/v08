@@ -29,6 +29,7 @@ typedef enum menu_loc_t{
   MAIN_MENU,
 
   DRAW_MENU,
+  NOISE_CONFIG,
   SPHERE_CONFIG,
 
   MASK_MENU,
@@ -64,6 +65,7 @@ private:
   void present_top_menu();
 
   void present_draw_menu();
+    void present_noise_config_menu();
     void present_sphere_config_menu();
 
   void present_mask_menu();
@@ -261,6 +263,14 @@ void client::deal_with_option(std::string opt)
   if(current_menu_location == DRAW_MENU)
   {//draw menu options
 
+    if(!opt.compare("noise"))
+    {
+      // sphere configuration menu
+      current_menu_location = NOISE_CONFIG;
+
+    }
+
+
     if(!opt.compare("sphere"))
     {
       // sphere configuration menu
@@ -279,13 +289,6 @@ void client::deal_with_option(std::string opt)
 
   if(current_menu_location == MASK_MENU)
   {//mask menu options
-
-    if(!opt.compare("sphere"))
-    {
-      // sphere configuration menu
-      current_menu_location = SPHERE_CONFIG;
-
-    }
 
     if(!opt.compare("back"))
     {
@@ -327,6 +330,9 @@ void client::show_current_menu()
 
     case DRAW_MENU:
       present_draw_menu();
+      break;
+    case NOISE_CONFIG:
+      present_noise_config_menu();
       break;
     case SPHERE_CONFIG:
       present_sphere_config_menu();
@@ -370,6 +376,7 @@ void client::present_draw_menu()
   cout << endl << "╞DRAW═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
+  cout << endl << "│  noise: go to noise config menu                │";
   cout << endl << "│  sphere: go to sphere config menu              │";
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
@@ -410,6 +417,153 @@ void client::present_util_menu()
   cout << endl << "│>                                               │";
   cout <<       "\r│>" << std::flush;  //so that this can be there  ^
                                             //at the end of the user prompt
+}
+
+void client::present_noise_config_menu()
+{
+
+  std::string input = "nut";
+
+  // cout << input;
+
+  float scale, threshold;
+
+  scale = 0.5f;
+  threshold = 0.5f;
+
+  bool draw, mask;
+
+  draw = true;
+  mask = false;
+
+  // float radius = 0.0f;
+
+  int fill = 0;
+
+  while(1)
+  {
+    clear();
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞MAIN═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞DRAW═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "╒════════════════════════════════════════════════╕";
+    cout << endl << "╞NOISE═CONFIG═MENU═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═ ═╡";
+    cout << endl << "│Enter one of the following, then the enter key. │";
+    cout << endl << "│                                                │";
+    cout << endl << "│    reasonable values for scale are ~0.1-1      │";
+    cout << endl << "│    try negative values for thresh to invert    │";
+    cout << endl << "│                                                │";
+
+    cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
+    cout << endl << "│        scale :  " <<  std::setw(5) << std::setprecision(5) << scale << "                          │";
+    cout << endl << "│        thresh :  " <<  std::setw(5) << std::setprecision(5) << threshold << "                         │";
+
+    cout << endl << "│                                                │";
+    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                     │";
+
+    cout << endl << "│                                                │";
+    cout << endl << "│  s : set the scale value                       │";
+    cout << endl << "│  t : set the threshold value                   │";
+    cout << endl << "│  f : set the fill value                        │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  m : toggle value of mask                      │";
+    cout << endl << "│  d : toggle value of draw                      │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  display: server shows block                   │";
+    cout << endl << "│  send : server will draw with current values   │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  back: go to draw menu                         │";
+    cout << endl << "│                                                │";
+    cout << endl << "│>                                               │";
+    cout <<       "\r│>" << std::flush;  //so that this can be there  ^
+                                              //at the end of the user prompt
+
+    cin >> input;
+
+    if(!input.compare("s"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> scale;
+    }
+
+    if(!input.compare("t"))
+    {
+      cout << "What is it?" << endl << " >";
+      cin >> threshold;
+    }
+
+    if(!input.compare("f"))
+    {
+      cout << "What is it? (0 to 9)" << endl << " >";
+      cin >> fill;
+    }
+
+    if(!input.compare("d"))
+    {
+      draw = draw ? false : true;
+    }
+
+    if(!input.compare("m"))
+    {
+      mask = mask ? false : true;
+    }
+
+    if(!input.compare("send"))
+    {
+      cout << "sending...";
+
+      message m;
+
+
+
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = NOISE;
+
+      // m.position1 = glm::vec3(center_x,center_y,center_z);
+      // m.radius1 = radius;
+      m.fill1 = fill;
+
+      m.threshold = threshold;
+      m.scale = scale;
+
+      m.mask = mask;
+      m.draw = draw;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+
+
+      cout << "\rsent        " << endl;
+    }
+
+    if(!input.compare("display"))
+    {
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = DISPLAY;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
+
+    if(!input.compare("back"))
+      break;
+
+  }
+
+  current_menu_location = DRAW_MENU;
+  show_current_menu();  //the combination of these two lines puts you back
+    //at a prompt for the draw menu, which outputs a menu then this config
+    //function returns to menu() for cin to take in the option (from that
+    //draw menu) and then calls deal_with_option() with whatever was cin.
+    //In any event - it works. I can do similar stuff for drawing other shapes,
+    //since they don't really have anything like sub-menus themselves
+
 }
 
 void client::present_sphere_config_menu()

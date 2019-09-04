@@ -55,7 +55,6 @@ void voraldo::initialize(int x, int y, int z)
 
   // data[0][0][0].val = 1.0f;
   // data[2][2][2].val = 1.0f;
-
 }
 
 //very simple

@@ -47,6 +47,7 @@ typedef enum msg_type_t{
 	TIME,			//tells the server to report the current time of day
 	DISPLAY, //tells the server to do the
 
+	NOISE,		//user wants to draw perlin noise
 	SPHERE			//user wants to draw a sphere into the voraldo object
 
 
@@ -71,8 +72,10 @@ typedef struct msg_t {
 	//ARGUMENTS TO DRAW FUNCTIONS
 
 	glm::vec3 position1;
-
 	float radius1;
+
+	float scale;
+	float threshold;
 
 	int fill1;
 
