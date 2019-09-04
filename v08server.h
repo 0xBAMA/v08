@@ -385,6 +385,22 @@ void server::take_input_from_user(int i)
       v.print_cli();
       break;
 
+    case UNMASK_ALL:
+      cout << "  " << m.PID << " wants to unmask all entries" << endl << endl;
+      v.mask_unmask_all();
+      break;
+
+    case INVERT_MASK:
+      cout << "  " << m.PID << " wants to invert the mask of all entries" << endl << endl;
+      v.mask_invert_mask();
+      break;
+
+    case MASK_NONZERO:
+      cout << "  " << m.PID << " wants to mask all nonzero entries" << endl << endl;
+
+      v.mask_all_nonzero();
+      break;
+
     case NOISE:
       cout << "  " << m.PID << " wants to draw noise with ";
       cout << "scale = " << m.scale << " and threshold = " << m.threshold;

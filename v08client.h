@@ -280,10 +280,40 @@ void client::deal_with_option(std::string opt)
   {//mask menu options
 
     if(!opt.compare("invert")) //send INVERT_MASK
+    {
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = INVERT_MASK;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
 
     if(!opt.compare("unmask"))  //send UNMASK_ALL
+    {
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = UNMASK_ALL;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
 
     if(!opt.compare("nonzero")) //send MASK_NONZERO
+    {
+      message m;
+      m.PID = client_PID;
+      m.sent_at = time(NULL);
+      m.type = MASK_NONZERO;
+
+      int send_fd = open(send_pipe, O_WRONLY);
+      write(send_fd, (char*)&m, sizeof(message));
+      close(send_fd);
+    }
 
     if(!opt.compare("back"))
       current_menu_location = MAIN_MENU;
