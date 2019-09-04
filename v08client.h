@@ -557,13 +557,7 @@ void client::present_noise_config_menu()
   }
 
   current_menu_location = DRAW_MENU;
-  show_current_menu();  //the combination of these two lines puts you back
-    //at a prompt for the draw menu, which outputs a menu then this config
-    //function returns to menu() for cin to take in the option (from that
-    //draw menu) and then calls deal_with_option() with whatever was cin.
-    //In any event - it works. I can do similar stuff for drawing other shapes,
-    //since they don't really have anything like sub-menus themselves
-
+  show_current_menu(); //see present_sphere_config_menu() for details
 }
 
 void client::present_sphere_config_menu()
