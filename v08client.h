@@ -616,7 +616,7 @@ void client::present_sphere_config_menu()
     cout << endl << "│        radius :" <<  std::setw(5) << std::setprecision(5) << radius << "                           │";
     cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
     cout << endl << "│                                                │";
-    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                       │";
+    cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                    │";
 
     cout << endl << "│                                                │";
     cout << endl << "│  x : set the center x value                    │";

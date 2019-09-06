@@ -20,7 +20,7 @@ using std::vector;
 typedef struct vox_t
 {
 
-  float val;
+  RGBA val;
   bool mask;
 
 }vox;
@@ -41,11 +41,11 @@ public:
   // the noise function generates values between 0 and 1 -
   // a positive threshold value tells it to draw if the sampled noise value is less than the threshold
   // a negative threshold value tells it to draw if the sampled noise value is greater than the absolute value of the threshold
-  void draw_perlin_noise(float scale, float threshold, int fill, bool draw=true, bool mask=false);
+  void draw_perlin_noise(float scale, float threshold, RGBA fill, bool draw=true, bool mask=false);
 
 
   //self explanatory, uses floor() to get nearest index
-  void draw_point(glm::vec3 position, int fill, bool draw=true, bool mask=false)
+  void draw_point(glm::vec3 position, RGBA fill, bool draw=true, bool mask=false)
   {
     //do the checking for mask value here - abstracts this away
     //so that other draw functions do not have to do any checking
@@ -77,11 +77,11 @@ public:
   }
 
   //draws a triangle of the given thickness between points v0,v1 and v2
-  void draw_triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, float thickness, int fill, bool draw=true, bool mask=false);
+  void draw_triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, float thickness, RGBA fill, bool draw=true, bool mask=false);
 
 
   //draws in all cells within a radius of a center point
-  void draw_sphere(glm::vec3 center_point, float radius, int fill, bool draw=true, bool mask=false)
+  void draw_sphere(glm::vec3 center_point, float radius, RGBA fill, bool draw=true, bool mask=false)
   {
     for(int z = 0; z < this->z; z++)
     {
@@ -103,15 +103,15 @@ public:
   //this shape can change position but the axes can be only along the cardinal
   //axes of the block. It should be a relatively simple thing to use a rotation
   //matrix, but I will need to think about the architecture of the function.
-  void draw_ellipsoid(glm::vec3 center, glm::vec3 radii, int fill, bool draw=true, bool mask=false);
+  void draw_ellipsoid(glm::vec3 center, glm::vec3 radii, RGBA fill, bool draw=true, bool mask=false);
 
   //draws a cylinder with circular faces centered at bvec and tvec, with the
   //radius specified by the input argument.
-  void draw_cylinder(glm::vec3 bvec, glm::vec3 tvec, double radius, int fill, bool draw=true, bool mask=false);
+  void draw_cylinder(glm::vec3 bvec, glm::vec3 tvec, double radius, RGBA fill, bool draw=true, bool mask=false);
 
   //draws a cylinder that has a smaller cyilnder taken out of the center
   //	>>	make sure to add validation code for if inner >= outer
-  void draw_tube(glm::vec3 bvec, glm::vec3 tvec, double inner_radius, double outer_radius, int fill, bool draw=true, bool mask=false);
+  void draw_tube(glm::vec3 bvec, glm::vec3 tvec, double inner_radius, double outer_radius, RGBA fill, bool draw=true, bool mask=false);
 
   //draws a block shape that can be stretched, skewed, twisted and rotated.
   //the main issue comes in when the four points making up a face do not lie in
@@ -140,14 +140,14 @@ public:
   // 	| /     | /
   //  |/      |/
   // 	b-------d
-  void draw_quadrilateral_hexahedron(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d, glm::vec3 e, glm::vec3 f, glm::vec3 g, glm::vec3 h, int fill, bool draw=true, bool mask=false);
+  void draw_quadrilateral_hexahedron(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d, glm::vec3 e, glm::vec3 f, glm::vec3 g, glm::vec3 h, RGBA fill, bool draw=true, bool mask=false);
 
 
   //too many arguments? allows for the scaling, rotation and then placement of the icosahedron.
   //in addition, a material can be specified to use for the vertexes, the material for the edges, and that for the faces.
   //the edge width (0 -> don't draw, 0-1 -> draw a line or >1 -> draw a cylinder) and the radius of the spheres for the verticies can be specified.
   //right now there's no way to manipulate the faces, beyond the material.
-  void draw_regular_icosahedron(double x_rot, double y_rot, double z_rot, double scale, glm::vec3 center_point, int vertex_material, double verticies_radius, int edge_material, double edge_thickness, int face_material, bool draw_faces = true, bool draw=true, bool mask=false);
+  void draw_regular_icosahedron(double x_rot, double y_rot, double z_rot, double scale, glm::vec3 center_point, RGBA vertex_material, double verticies_radius, RGBA edge_material, double edge_thickness, RGBA face_material, bool draw_faces = true, bool draw=true, bool mask=false);
 
 
   //hard coded filename
@@ -194,8 +194,8 @@ private:
   bool get_mask(glm::vec3 index);
   void set_mask(glm::vec3 index, bool in);
 
-  float get_val(glm::vec3 index);
-  void set_val(glm::vec3 index, float in);
+  RGBA get_val(glm::vec3 index);
+  void set_val(glm::vec3 index, RGBA in);
 
   //this is temporarily a float
   // float get_data_by_vector_index(glm::vec3 index);

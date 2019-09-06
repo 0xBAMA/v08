@@ -163,8 +163,8 @@ int server::listen()  //call this from the glut idle function?
 
   // list_users();
 
-// info from http://www.unixguide.net/unix/programming/2.1.2.shtml
-// and also  http://man7.org/linux/man-pages/man2/open.2.html
+  // info from http://www.unixguide.net/unix/programming/2.1.2.shtml
+  // and also  http://man7.org/linux/man-pages/man2/open.2.html
 
   // open all active file descriptors
   //  this is server_np plus <PID>_recv for each client
@@ -419,18 +419,15 @@ void server::take_input_from_user(int i)
       cout << "  " << m.PID << " wants to draw a sphere at ";
       cout << m.position1.x << " " << m.position1.y << " " << m.position1.z;
 
-
       cout << " with radius " << m.radius1 << endl;
 
       cout << endl << "...";
-
 
       center = glm::vec3(m.position1.x, m.position1.y, m.position1.z);
 
       // cout << center.x << " " << center.y << " " << center.z << endl;
 
       v.draw_sphere(glm::vec3(center.x,center.y,center.z), m.radius1, m.fill1, m.draw, m.mask);
-
 
       cout << "\rdone";
 

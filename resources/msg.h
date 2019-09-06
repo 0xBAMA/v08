@@ -28,6 +28,7 @@
 
 typedef struct rgba_t{
 
+	//16 bit values - for 16 bit
   unsigned short red;
   unsigned short green;
   unsigned short blue;
@@ -59,12 +60,6 @@ typedef enum msg_type_t{
 } msg_type;
 
 
-// typedef struct initial_msg{
-//
-//
-// }	initial_msg_t;
-
-
 //structure for the subsequent messages
 typedef struct msg_t {
 
@@ -82,7 +77,7 @@ typedef struct msg_t {
 	float scale;
 	float threshold;
 
-	int fill1;
+	RGBA fill1;
 
 	bool draw;
 	bool mask;
