@@ -19,10 +19,10 @@ int main(int argc, char const *argv[])
 	}
 	else
 	{
-		x = 16;
-		y = 16;
-		z = 16;
-		cout << "standard dimensions used (16x16x16)" << endl;
+		x = 256;
+		y = 256;
+		z = 256;
+		cout << "standard dimensions used (256x256x256)" << endl;
 	}
 
 	s = new server(x,y,z);

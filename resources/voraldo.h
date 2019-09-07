@@ -54,6 +54,12 @@ public:
     y = std::floor(position.y);
     z = std::floor(position.z);
 
+    if((x < 0 || x >= this->x)||(y < 0 || y >= this->y)||(z < 0 || z >= this->z))
+    {
+      cout << "invalid location " << x << " " << y << " " << z << endl;
+      return;
+    }
+
 
     if(!data[x][y][z].mask)
     {//not masked, so it's ok to manipulate this data
@@ -183,7 +189,7 @@ public:
     bool b = (first.b == second.b);
     bool a = (first.a == second.a);
 
-    return (r && g && b && a);
+    return !(r && g && b && a);
   }
 
   //.png appended automatically
