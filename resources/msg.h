@@ -28,13 +28,15 @@
 
 typedef struct rgba_t{
 
-	//16 bit values - for 16 bit
-  unsigned short red;
-  unsigned short green;
-  unsigned short blue;
-  unsigned short alpha;
+//16-bit values - so we can do 16-bit 3d textures
+	//ranges are now 0-65535 rather than 0-255, conversion of rgb is just * 256
+	
+  unsigned short r;	//red
+  unsigned short g;	//green
+  unsigned short b;	//blue
+  unsigned short a;	//alpha
 
-}rgba;
+}RGBA;
 
 
 //expresses the type of the incoming message

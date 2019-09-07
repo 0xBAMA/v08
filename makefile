@@ -33,8 +33,8 @@ v08client.o: v08client.cc v08client.h resources/msg.h
 
 
 #SERVER
-v08server: v08server.o
-	$(CC) $(MAKE_EXE_SERVER) v08server.o voraldo.o
+v08server: v08server.o lodepng.o
+	$(CC) $(MAKE_EXE_SERVER) v08server.o voraldo.o lodepng.o
 
 v08server.o: v08server.cc v08server.h resources/msg.h voraldo.o
 	$(CC) $(MAKE_OBJ) v08server.cc
@@ -43,7 +43,10 @@ voraldo.o: resources/voraldo.h resources/voraldo.cc
 	@echo
 	@echo -e "\e[31mBUILDING SERVER EXECUTABLE\e[0m"
 	@echo
-	$(CC) $(MAKE_OBJ) resources/voraldo.cc resources/lodepng.cpp -ansi -std=c++11
+	$(CC) $(MAKE_OBJ) resources/voraldo.cc
+
+lodepng.o:
+	$(CC) $(MAKE_OBJ) resources/lodepng.cpp -ansi -std=c++11 -lpng
 
 clean:
 	@echo

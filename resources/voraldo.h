@@ -8,8 +8,6 @@ using std::vector;
 #include "msg.h" //definitions of message types
   //also includes glm types, since the messages need those
 
-#include "lodepng.h"
-// Good, simple png library
 
 
 #ifndef VORALDO
@@ -20,7 +18,7 @@ using std::vector;
 typedef struct vox_t
 {
 
-  RGBA val;
+  RGBA color; //4 2-byte values representing red, green, blue and alpha channels
   bool mask;
 
 }vox;
@@ -62,7 +60,7 @@ public:
 
       if(draw)  //user wants to draw
       {
-        data[x][y][z].val = fill;
+        data[x][y][z].color = fill;
         data[x][y][z].mask = mask;
       }
       else
@@ -176,8 +174,19 @@ public:
   //BASIC UTILITIES
 
   void initialize(int x, int y, int z);
-  void print_cli();
+  // void print_cli();
 
+  bool compare_rgba(RGBA first, RGBA second)
+  {
+    bool r = (first.r == second.r);
+    bool g = (first.g == second.g);
+    bool b = (first.b == second.b);
+    bool a = (first.a == second.a);
+
+    return (r && g && b && a);
+  }
+
+  //.png appended automatically
   void save(std::string filename); //output block to png image (slices)
   void load(std::string filename, bool overwrite=true, short thresh=0);
   //if overwrite is set to false, areas in the loaded image with alpha
@@ -194,8 +203,8 @@ private:
   bool get_mask(glm::vec3 index);
   void set_mask(glm::vec3 index, bool in);
 
-  RGBA get_val(glm::vec3 index);
-  void set_val(glm::vec3 index, RGBA in);
+  RGBA get_color(glm::vec3 index);
+  void set_color(glm::vec3 index, RGBA in);
 
   //this is temporarily a float
   // float get_data_by_vector_index(glm::vec3 index);

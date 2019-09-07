@@ -439,6 +439,7 @@ void client::present_noise_config_menu()
 {
 
   std::string input = "nut";
+  std::string filename = "save";
 
   // cout << input;
 
@@ -453,8 +454,10 @@ void client::present_noise_config_menu()
   mask = false;
 
   // float radius = 0.0f;
+  // int fill = 0;
 
-  int fill = 0;
+  RGBA color;
+
 
   while(1)
   {
@@ -470,8 +473,12 @@ void client::present_noise_config_menu()
     cout << endl << "│    reasonable values for scale are ~0.1-1      │";
     cout << endl << "│    try negative values for thresh to invert    │";
     cout << endl << "│                                                │";
-
-    cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
+    cout << endl << "│ fill r: " << std::setw(5) << std::setprecision(5) << color.r
+    << "  g: " << std::setw(5) << std::setprecision(5)<< color.g
+    << "  b: " << std::setw(5) << std::setprecision(5)<< color.b
+    << "  a: " << std::setw(5) << std::setprecision(5)<< color.a
+                              << "    │";
+    // cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
     cout << endl << "│        scale :  " <<  std::setw(5) << std::setprecision(5) << scale << "                          │";
     cout << endl << "│        thresh :  " <<  std::setw(5) << std::setprecision(5) << threshold << "                         │";
 
@@ -481,13 +488,22 @@ void client::present_noise_config_menu()
     cout << endl << "│                                                │";
     cout << endl << "│  s : set the scale value                       │";
     cout << endl << "│  t : set the threshold value                   │";
-    cout << endl << "│  f : set the fill value                        │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  red : set red channel of the fill value       │";
+    cout << endl << "│  green : set green channel of the fill value   │";
+    cout << endl << "│  blue : set blue channel of the fill value     │";
+    cout << endl << "│  alpha : set alpha channel of the fill value   │";
+
+
     cout << endl << "│                                                │";
     cout << endl << "│  m : toggle value of mask                      │";
     cout << endl << "│  d : toggle value of draw                      │";
     cout << endl << "│                                                │";
-    cout << endl << "│  display: server shows block                   │";
-    cout << endl << "│  send : server will draw with current values   │";
+    cout << endl << "│  send : server draws noise with current values │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  save: server outputs filename.png             │";
+    cout << endl << "│   filename: " << filename << "                 │";
+
     cout << endl << "│                                                │";
     cout << endl << "│  back: go to draw menu                         │";
     cout << endl << "│                                                │";
@@ -509,10 +525,28 @@ void client::present_noise_config_menu()
       cin >> threshold;
     }
 
-    if(!input.compare("f"))
+    if(!input.compare("red"))
     {
-      cout << "What is it? (0 to 9)" << endl << " >";
-      cin >> fill;
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.r;
+    }
+
+    if(!input.compare("green"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.g;
+    }
+
+    if(!input.compare("blue"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.b;
+    }
+
+    if(!input.compare("alpha"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.a;
     }
 
     if(!input.compare("d"))
@@ -525,21 +559,24 @@ void client::present_noise_config_menu()
       mask = mask ? false : true;
     }
 
+    if(!input.compare("filename"))
+    {
+      cout << "what is it?" << endl << " >";
+      cin >> filename;
+    }
+
     if(!input.compare("send"))
     {
       cout << "sending...";
 
       message m;
 
-
-
       m.PID = client_PID;
       m.sent_at = time(NULL);
       m.type = NOISE;
 
-      // m.position1 = glm::vec3(center_x,center_y,center_z);
-      // m.radius1 = radius;
-      m.fill1 = fill;
+
+      m.fill1 = color;
 
       m.threshold = threshold;
       m.scale = scale;
@@ -555,12 +592,15 @@ void client::present_noise_config_menu()
       cout << "\rsent        " << endl;
     }
 
-    if(!input.compare("display"))
+    if(!input.compare("save"))
     {
       message m;
       m.PID = client_PID;
       m.sent_at = time(NULL);
       m.type = DISPLAY;
+
+      sprintf(m.message_text, "%s", filename.c_str());
+
 
       int send_fd = open(send_pipe, O_WRONLY);
       write(send_fd, (char*)&m, sizeof(message));
@@ -580,6 +620,8 @@ void client::present_sphere_config_menu()
 {
 
   std::string input = "nut";
+  std::string filename = "save";
+
 
   // cout << input;
 
@@ -596,7 +638,8 @@ void client::present_sphere_config_menu()
 
   float radius = 0.0f;
 
-  int fill = 0;
+  // int fill = 0;
+  RGBA color;
 
   while(1)
   {
@@ -614,7 +657,11 @@ void client::present_sphere_config_menu()
     << "    z: " << std::setw(5) << std::setprecision(5)<< center_z
                               << "   │";
     cout << endl << "│        radius :" <<  std::setw(5) << std::setprecision(5) << radius << "                           │";
-    cout << endl << "│        fill :  " <<  std::setw(5) << std::setprecision(5) << fill << "                           │";
+    cout << endl << "│ fill r: " << std::setw(5) << std::setprecision(5) << color.r
+    << "  g: " << std::setw(5) << std::setprecision(5)<< color.g
+    << "  b: " << std::setw(5) << std::setprecision(5)<< color.b
+    << "  a: " << std::setw(5) << std::setprecision(5)<< color.a
+                              << "    │";
     cout << endl << "│                                                │";
     cout << endl << "│         draw : " << draw << "   mask:  " << mask << "                    │";
 
@@ -623,13 +670,22 @@ void client::present_sphere_config_menu()
     cout << endl << "│  y : set the center y value                    │";
     cout << endl << "│  z : set the center z value                    │";
     cout << endl << "│  r : set the radius value                      │";
-    cout << endl << "│  f : set the fill value                        │";
+    // cout << endl << "│  f : set the fill value                        │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  red : set red channel of the fill value       │";
+    cout << endl << "│  green : set green channel of the fill value   │";
+    cout << endl << "│  blue : set blue channel of the fill value     │";
+    cout << endl << "│  alpha : set alpha channel of the fill value   │";
+
+
     cout << endl << "│                                                │";
     cout << endl << "│  m : toggle value of mask                      │";
     cout << endl << "│  d : toggle value of draw                      │";
     cout << endl << "│                                                │";
-    cout << endl << "│  display: server shows block                   │";
-    cout << endl << "│  send : server will draw with current values   │";
+    cout << endl << "│  send : server draws noise with current values │";
+    cout << endl << "│                                                │";
+    cout << endl << "│  save: server outputs filename.png             │";
+    cout << endl << "│   filename: " << filename << "                 │";
     cout << endl << "│                                                │";
     cout << endl << "│  back: go to draw menu                         │";
     cout << endl << "│                                                │";
@@ -663,11 +719,30 @@ void client::present_sphere_config_menu()
       cin >> radius;
     }
 
-    if(!input.compare("f"))
+    if(!input.compare("red"))
     {
-      cout << "What is it? (0 to 9)" << endl << " >";
-      cin >> fill;
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.r;
     }
+
+    if(!input.compare("green"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.g;
+    }
+
+    if(!input.compare("blue"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.b;
+    }
+
+    if(!input.compare("alpha"))
+    {
+      cout << "What is it? (0 to 65535)" << endl << " >";
+      cin >> color.a;
+    }
+
 
     if(!input.compare("d"))
     {
@@ -693,7 +768,7 @@ void client::present_sphere_config_menu()
 
       m.position1 = glm::vec3(center_x,center_y,center_z);
       m.radius1 = radius;
-      m.fill1 = fill;
+      m.fill1 = color;
 
       m.mask = mask;
       m.draw = draw;
@@ -706,12 +781,15 @@ void client::present_sphere_config_menu()
       cout << "\rsent        " << endl;
     }
 
-    if(!input.compare("display"))
+    if(!input.compare("save"))
     {
       message m;
       m.PID = client_PID;
       m.sent_at = time(NULL);
       m.type = DISPLAY;
+
+      sprintf(m.message_text, "%s", filename.c_str());
+
 
       int send_fd = open(send_pipe, O_WRONLY);
       write(send_fd, (char*)&m, sizeof(message));

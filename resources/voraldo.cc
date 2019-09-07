@@ -2,6 +2,8 @@
 #include "perlin.h"
 //simple to use implementation of 3d perlin noise
 
+#include "lodepng.h"
+// Good, simple png library
 
 
 //default constructor
@@ -49,12 +51,14 @@ void voraldo::initialize(int x, int y, int z)
     for(int loopy = 0; loopy < y; loopy++)
       for(int loopz = 0; loopz < z; loopz++)
       {
-        data[loopx][loopy][loopz].val = ((int)rand()) % 10;
+        //initialize with zero values
+        data[loopx][loopy][loopz].color.r = 0;
+        data[loopx][loopy][loopz].color.g = 0;
+        data[loopx][loopy][loopz].color.b = 0;
+        data[loopx][loopy][loopz].color.a = 0;
+
         data[loopx][loopy][loopz].mask = false;
       }
-
-  // data[0][0][0].val = 1.0f;
-  // data[2][2][2].val = 1.0f;
 }
 
 bool voraldo::get_mask(glm::vec3 index)
@@ -78,22 +82,22 @@ void voraldo::set_mask(glm::vec3 index, bool in)
 //this is easier than messing with passing around things of type vox
 //eventually it will deal with straight 16-bit RGBA values, so they can
 //be passed directly to the GPU
-float voraldo::get_val(glm::vec3 index)
+RGBA voraldo::get_color(glm::vec3 index)
 {
   int x = floor(index.x);
   int y = floor(index.y);
   int z = floor(index.z);
 
-  return data[x][y][z].val;
+  return data[x][y][z].color;
 }
 
-void voraldo::set_val(glm::vec3 index, float in)
+void voraldo::set_color(glm::vec3 index, RGBA in)
 {
   int x = floor(index.x);
   int y = floor(index.y);
   int z = floor(index.z);
 
-  data[x][y][z].val = in;
+  data[x][y][z].color = in;
 }
 
 void voraldo::mask_unmask_all()
@@ -114,63 +118,68 @@ void voraldo::mask_invert_mask()
 
 void voraldo::mask_all_nonzero()
 {
+  RGBA empty_black;
+
+  empty_black.r = empty_black.g = empty_black.b = empty_black.a = 0;
+
   for(int z = 0; z < this->z; z++)
     for(int y = 0; y < this->y; y++)
       for(int x = 0; x < this->x; x++)
-        if(get_val(glm::vec3(x,y,z)) != 0.0f)
+        if(compare_rgba(get_color(glm::vec3(x,y,z)), empty_black)) //in the style of string compare - return true for a non match, false for a match
           set_mask(glm::vec3(x,y,z), true);
 }
 
 //very simple placeholder output
-void voraldo::print_cli()
-{
-  cout << endl;
+//(NOTE THIS WILL BE PRETTY BROKEN AFTER 9/7/2019)
+// void voraldo::print_cli()
+// {
+//   cout << endl;
+//
+//   for(int z = 0; z < this->z; z++)
+//   {
+//
+//     cout << "slice " << std::hex << z << endl;
+//
+//     for(int y = 0; y < this->y; y++)
+//     {
+//       for(int x = 0; x < this->x; x++)
+//       { //colors
+//         if((int)data[x][y][z].val %2 == 0)
+//           cout << "\e[32m";
+//         if((int)data[x][y][z].val %3 == 0)
+//           cout << "\e[34m";
+//         if((int)data[x][y][z].val %4 == 0)
+//           cout << "\e[35m";
+//         if((int)data[x][y][z].val == 7)
+//           cout << "\e[31m";
+//
+//         cout << data[x][y][z].val << "\e[0m"; //reset colors
+//
+//
+//       }
+//       cout << "  " << std::hex << y << endl;
+//     }
+//     cout << endl;
+//   }
+//
+//   for(int x = 0; x < this->x; x++)
+//     if(x/16 == 0)
+//       cout << " ";
+//     else
+//       cout << x/16;
+//
+//   cout << endl;
+//
+//   for(int x = 0; x < this->x; x++)
+//     cout << std::hex << x%16;
+//
+//   cout << std::dec << endl;
+//
+//
+// }
 
-  for(int z = 0; z < this->z; z++)
-  {
 
-    cout << "slice " << std::hex << z << endl;
-
-    for(int y = 0; y < this->y; y++)
-    {
-      for(int x = 0; x < this->x; x++)
-      { //colors
-        if((int)data[x][y][z].val %2 == 0)
-          cout << "\e[32m";
-        if((int)data[x][y][z].val %3 == 0)
-          cout << "\e[34m";
-        if((int)data[x][y][z].val %4 == 0)
-          cout << "\e[35m";
-        if((int)data[x][y][z].val == 7)
-          cout << "\e[31m";
-
-        cout << data[x][y][z].val << "\e[0m"; //reset colors
-
-
-      }
-      cout << "  " << std::hex << y << endl;
-    }
-    cout << endl;
-  }
-
-  for(int x = 0; x < this->x; x++)
-    if(x/16 == 0)
-      cout << " ";
-    else
-      cout << x/16;
-
-  cout << endl;
-
-  for(int x = 0; x < this->x; x++)
-    cout << std::hex << x%16;
-
-  cout << std::dec << endl;
-
-
-}
-
-
-void voraldo::draw_perlin_noise(float scale, float threshold, int fill, bool draw, bool mask)
+void voraldo::draw_perlin_noise(float scale, float threshold, RGBA fill, bool draw, bool mask)
 {
   PerlinNoise p;
 
@@ -210,6 +219,78 @@ void voraldo::draw_perlin_noise(float scale, float threshold, int fill, bool dra
       }
     }
   }
+}
+
+void voraldo::save(std::string filename)
+{
+  int width = this->x;
+  int height = this->y;
+  int depth = this->z;
+
+  filename += ".png";
+
+  cout << "saving block of " << width << " " << height << " " << depth << endl;
+  cout << " with name " << filename << endl;
+
+  RGBA temporary_color;
+
+  std::vector<unsigned char> image;
+
+	unsigned image_width = width;
+  unsigned image_height = height * depth;
+
+  //2 bytes per channel, 4 channels, then number of pixels.
+  int image_size_bytes = 2 * 4 * width * height * depth;
+
+  image.resize( image_size_bytes ); // byte array has same number of bytes
+                                                //as the image it reperesents
+
+  int image_index = 0;
+
+  for(int z = 0; z < depth; z++)
+    for(int y = 0; y < height; y++)
+      for(int x = 0; x < width; x++)
+      {
+
+        temporary_color = get_color(glm::vec3( x, y, z ));
+
+        //red
+				image[image_index] = (unsigned char) (temporary_color.r / 256); //high bits
+  			image_index++;
+
+  			image[image_index] = (unsigned char) (temporary_color.r % 256); //low bits
+  			image_index++;
+
+        //green
+        image[image_index] = (unsigned char) (temporary_color.g / 256); //high bits
+        image_index++;
+
+        image[image_index] = (unsigned char) (temporary_color.g % 256); //low bits
+        image_index++;
+
+        //blue
+        image[image_index] = (unsigned char) (temporary_color.b / 256); //high bits
+        image_index++;
+
+        image[image_index] = (unsigned char) (temporary_color.b % 256); //low bits
+        image_index++;
+
+        //alpha
+        image[image_index] = (unsigned char) (temporary_color.a / 256); //high bits
+        image_index++;
+
+        image[image_index] = (unsigned char) (temporary_color.a % 256); //low bits
+        image_index++;
+
+      }
+
+
+  //z * height * width  +  y * width  +  x
+
+	unsigned error = lodepng::encode("resources/models/" + filename, image, image_width, image_height,  LodePNGColorType::LCT_RGBA, 16 );
+
+	if(error) std::cout << "encoder error on the color image step " << error << ": "<< lodepng_error_text(error) << std::endl;
+
 }
 
 

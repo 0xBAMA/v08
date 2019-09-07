@@ -108,7 +108,7 @@ server::server(int x, int y, int z)
 
    v.initialize(x,y,z);
 
-   v.print_cli();
+   // v.print_cli();
 
 
 
@@ -330,6 +330,7 @@ void server::read_from_server_np()
 void server::take_input_from_user(int i)
 {
   glm::vec3 center;
+  std::string filename;
 
   time_t temp_time;
   message m,r;
@@ -381,8 +382,19 @@ void server::take_input_from_user(int i)
 
     case DISPLAY:
       cout << "  " << m.PID << " wants to see the block" << endl;
-      cout << "  here it is:" << endl;
-      v.print_cli();
+      // cout << "  here it is:" << endl;
+
+      // cout << "  give me a name (.png will be appended automatically): ";
+      // cin >> filename;
+
+      cout << " the name is given as: " << m.message_text << endl;
+
+      v.save(m.message_text);
+
+
+
+      // v.print_cli();
+
       break;
 
     case UNMASK_ALL:
