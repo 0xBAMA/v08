@@ -189,6 +189,7 @@ public:
     bool b = (first.b == second.b);
     bool a = (first.a == second.a);
 
+    //false for true, in the style of strcmp()
     return !(r && g && b && a);
   }
 

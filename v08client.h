@@ -346,12 +346,12 @@ void client::show_current_menu()
     case DRAW_MENU:
       present_draw_menu();
       break;
-    case NOISE_CONFIG:
-      present_noise_config_menu();
-      break;
-    case SPHERE_CONFIG:
-      present_sphere_config_menu();
-      break;
+      case NOISE_CONFIG:
+        present_noise_config_menu();
+        break;
+      case SPHERE_CONFIG:
+        present_sphere_config_menu();
+        break;
 
     case MASK_MENU:
       present_mask_menu();
