@@ -29,8 +29,14 @@ typedef enum menu_loc_t{
   MAIN_MENU,
 
   DRAW_MENU,
-  NOISE_CONFIG,
-  SPHERE_CONFIG,
+    NOISE_CONFIG,
+    POINT_CONFIG,
+    SPHERE_CONFIG,
+    ELLIPSOID_CONFIG,
+    CYLINDER_CONFIG,
+    TUBE_CONFIG,
+    CUBOID_CONFIG,
+    ICO_CONFIG,
 
   MASK_MENU,
 
@@ -266,8 +272,26 @@ void client::deal_with_option(std::string opt)
     if(!opt.compare("noise")) // sphere configuration menu
       current_menu_location = NOISE_CONFIG;
 
+    if(!opt.compare("point")) // point configuration menu
+      current_menu_location = POINT_CONFIG;
+
     if(!opt.compare("sphere")) // sphere configuration menu
       current_menu_location = SPHERE_CONFIG;
+
+    if(!opt.compare("ellipsoid")) // ellipsoid configuration menu
+      current_menu_location = ELLIPSOID_CONFIG;
+
+    if(!opt.compare("cylinder")) // cylinder configuration menu
+      current_menu_location = CYLINDER_CONFIG;
+
+    if(!opt.compare("tube")) // tube configuration menu
+      current_menu_location = TUBE_CONFIG;
+
+    if(!opt.compare("cuboid")) // cuboid configuration menu
+      current_menu_location = CUBOID_CONFIG;
+
+    if(!opt.compare("ico")) // ico configuration menu
+      current_menu_location = ICO_CONFIG;
 
     if(!opt.compare("back"))
       current_menu_location = MAIN_MENU;
@@ -346,11 +370,32 @@ void client::show_current_menu()
     case DRAW_MENU:
       present_draw_menu();
       break;
+      //draw submenus
       case NOISE_CONFIG:
         present_noise_config_menu();
         break;
+      case POINT_CONFIG:
+        // present_point_config_menu();
+        break;
       case SPHERE_CONFIG:
         present_sphere_config_menu();
+        break;
+
+        //to do - in the same style as those above
+      case ELLIPSOID_CONFIG:
+        //present_ellipsoid_config_menu();
+        break;
+      case CYLINDER_CONFIG:
+        //present_cylinder_config_menu();
+        break;
+      case TUBE_CONFIG:
+        //present_tube_config_menu();
+        break;
+      case CUBOID_CONFIG:
+        //present_cuboid_config_menu(); //allow the moving of faces along axes
+        break;
+      case ICO_CONFIG:
+        //present_icosahedron_config_menu();
         break;
 
     case MASK_MENU:
@@ -392,7 +437,14 @@ void client::present_draw_menu()
   cout << endl << "│Enter one of the following, then the enter key. │";
   cout << endl << "│                                                │";
   cout << endl << "│  noise: go to noise config menu                │";
+  cout << endl << "│  point: go to point config menu                │";
   cout << endl << "│  sphere: go to sphere config menu              │";
+  cout << endl << "│  ellipsoid: go to ellipsoid config menu        │";
+  cout << endl << "│  cylinder: go to cylinder config menu          │";
+  cout << endl << "│  tube: go to tube config menu                  │";
+  cout << endl << "│  cuboid: go to cuboid config menu              │";
+  cout << endl << "│  ico: go to icosahedron config menu            │";
+  cout << endl << "│                                                │";
   cout << endl << "│  back: go to main menu                         │";
   cout << endl << "│                                                │";
   cout << endl << "│>                                               │";
@@ -810,7 +862,26 @@ void client::present_sphere_config_menu()
     //since they don't really have anything like sub-menus themselves
 
 }
-
+// 
+// void client::present_ellipsoid_config_menu()
+// {
+//
+// }
+//
+// void client::present_cylinder_config_menu()
+// {
+//
+// }
+//
+// void client::present_tube_config_menu()
+// {
+//
+// }
+//
+// void client::present_cuboid_config_menu()
+// {
+//
+// }
 
 
 

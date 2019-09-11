@@ -30,7 +30,7 @@ typedef struct rgba_t{
 
 //16-bit values - so we can do 16-bit 3d textures
 	//ranges are now 0-65535 rather than 0-255, conversion of rgb is just * 256
-	
+
   unsigned short r;	//red
   unsigned short g;	//green
   unsigned short b;	//blue
@@ -56,6 +56,7 @@ typedef enum msg_type_t{
 
 
 	NOISE,		//user wants to draw perlin noise
+	POINT,		//user wants to draw a point
 	SPHERE			//user wants to draw a sphere into the voraldo object
 
 

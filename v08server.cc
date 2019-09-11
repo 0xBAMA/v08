@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 
 	//open a window, set up all the callbacks - should this be internal to the
 	// server class?
-	// while(s->listen()); // should happen in the timer function?
+	while(s->listen()); // should happen in the timer function?
 
 	return 0;
 
